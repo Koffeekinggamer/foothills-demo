@@ -9,47 +9,134 @@ import Promise from '../../components/Promise.astro';
 import Builders from '../../components/Builders.astro';
 import TrustStrip from '../../components/TrustStrip.astro';
 import Visit from '../../components/Visit.astro';
-import { SITE } from '../../data/site';
+import { SITE, BOOKING } from '../../data/site';
 import { withBase } from '../../data/url';
-// Live booking embed (inert in demo): replace with the real Google Calendar appointment schedule URL.
-const CAL_SRC_LIVE = 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID?gv=true';
-const CAL_SRC_DEMO = withBase('/booking-embed-placeholder.html');
+import { BOOKING_CATEGORIES, bookingTitle } from '../../data/team';
+
+// LIVE BOOKING CALENDARS (inert in the demo: no real Google Calendar URLs).
+// Replace each person's CALENDAR_URLS[slug] with that person's Google Calendar
+// appointment-schedule URL. Confirmations go to that person.
+//
+//   lauren-manzin     Director of Cabinetry – Charleston
+//   michael-holladay  Sales Manager & Director of Cabinetry – Landrum
+//   lexi-wertheim     Furniture Specialist (Landrum)
+//   savannah-russel   Furniture Specialist (Landrum)
+//   kyra-yoder        Furniture Specialist (Landrum)
+//
+const CALENDAR_URLS: Record<string, string> = {
+  'lauren-manzin': 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID_LAUREN_MANZIN?gv=true',
+  'michael-holladay': 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID_MICHAEL_HOLLADAY?gv=true',
+  'lexi-wertheim': 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID_LEXI_WERTHEIM?gv=true',
+  'savannah-russel': 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID_SAVANNAH_RUSSEL?gv=true',
+  'kyra-yoder': 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID_KYRA_YODER?gv=true',
+};
+const bookable = BOOKING_CATEGORIES.flatMap((c) => c.people);
 const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a showroom appointment', url: `${SITE.origin}/pages/book`,
   potentialAction: { '@type': 'ReserveAction', target: `${SITE.origin}/pages/book`, result: { '@type': 'Reservation', name: 'Furniture design consultation' } }, about: { '@id': `${SITE.origin}/#store` } };
 ---
-<Base title="Book a Showroom Appointment | Foothills Amish Furniture" description="Reserve one-on-one time with a furniture specialist at our Landrum, SC showroom. Bring photos and measurements; we’ll have samples ready." path="/pages/book" bodyClass="page-book" jsonld={[ld]}>
+<Base title="Book a Showroom Appointment | Foothills Amish Furniture" description="Reserve a one-hour appointment with a furniture or cabinetry specialist, at least 24 hours ahead. Landrum, SC showroom, Monday–Saturday 10 a.m.–5 p.m." path="/pages/book" bodyClass="page-book" jsonld={[ld]}>
 <section class="wrap book-hero" aria-labelledby="book-h">
   <div>
     <span class="eyebrow eyebrow--rule">Book a visit</span>
-    <h1 id="book-h">Reserve time with a furniture specialist</h1>
-    <p class="lede">Bring your questions, photos and measurements. We’ll set aside dedicated time and have wood, stain and fabric samples ready.</p>
-    <p class="book-hero__status"><OpenStatus long /><span>Walk-ins welcome during open hours</span></p>
+    <h1 id="book-h">Reserve time with a specialist</h1>
+    <p class="lede">Appointments are one hour, reserved at least 24 hours ahead, with an hour between visits so we can give you our full attention.</p>
+    <p class="book-hero__status"><OpenStatus long /><span>{BOOKING.hoursLabel}</span></p>
   </div>
 </section>
 
 <section class="section--sm" style="padding-top:0" aria-label="Appointment booking">
-  <div class="wrap booking">
-    <div>
-      <ul class="appt-types" role="list">
-        <li class="appt"><h2 class="h4">Furniture design consultation</h2><p>60 min · Landrum showroom</p><a class="btn btn--sm" href="#cal" data-cal-open data-track="book_appointment_click" data-cta-location="booking_furniture">Choose a time</a></li>
-        <li class="appt"><h2 class="h4">Custom cabinetry consultation</h2><p>60 min · Landrum showroom</p><a class="btn btn--sm btn--secondary" href="#cal" data-cal-open data-track="book_appointment_click" data-cta-location="booking_cabinetry">Choose a time</a></li>
-      </ul>
-      <h2 class="h4" style="margin-top:var(--sp-7)">What to expect</h2>
-      <ul class="ticks">
-        <li>One specialist, one hour, no pressure. Free design help included.</li>
-        <li>See and touch woods, stains, paints, fabrics and leathers side by side.</li>
-        <li>Get pricing on anything you’d like built to order, in your wood and finish.</li>
-      </ul>
-      <p class="small muted" style="margin-top:var(--sp-5)">Prefer to call? <a class="link tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="booking">{SITE.telDisplay}</a></p>
-    </div>
-    <div class="cal-facade" id="cal" data-facade data-title="Book an appointment with Foothills Amish Furniture" data-src={CAL_SRC_DEMO} data-live-src={CAL_SRC_LIVE}>
-      <div class="cal-facade__inner">
-        <Icon name="cal" class="cal" />
-        <h2 class="h3">See open times</h2>
-        <p class="muted">Times come from our Google Calendar. You’ll get a confirmation email right away. The calendar loads only when you ask for it.</p>
-        <button class="btn" type="button" data-track="book_appointment_click" data-cta-location="booking_embed">Show available times</button>
+  <div class="wrap">
+    <div class="book-flow" data-book-flow>
+      <div class="book-flow__step" data-step="category">
+        <p class="book-flow__kicker"><span class="tnum">1</span> of 2</p>
+        <h2 class="h3">Cabinetry or Furniture?</h2>
+        <ul class="book-cats" role="list">
+          {BOOKING_CATEGORIES.map((c) => (
+            <li>
+              <button class="book-cat" type="button" data-choose={c.id}>
+                <span class="book-cat__media"><Img name={c.image} alt="" sizes="(min-width:768px) 45vw, 100vw" widths={[400, 800, 1200, 1600, 2400]} /></span>
+                <span class="book-cat__body">
+                  <span class="book-cat__label">{c.label}</span>
+                  <span class="book-cat__blurb">{c.blurb}</span>
+                  <span class="book-cat__who">{c.people.map((p) => p.name.split(' ')[0]).join(', ')}</span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
+
+      {BOOKING_CATEGORIES.map((c) => (
+        <div class="book-flow__step" data-step={`people-${c.id}`}>
+          {c.intro ? (
+            <div class="book-intro">
+              <div class="book-intro__media">
+                <Img name={c.intro} alt={c.introAlt} sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200, 1600, 2400]} />
+                {c.accent && (
+                  <span class="media-accent"><Img name={c.accent} alt={c.accentAlt} sizes="(min-width:1024px) 160px, 128px" widths={[400, 800, 1200]} /></span>
+                )}
+              </div>
+              <div class="book-intro__copy">
+                <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
+                <h2 class="h3">Who would you like to meet?</h2>
+                <p class="muted" style="margin-top:var(--sp-2)">{c.blurb}</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
+              <h2 class="h3">Who would you like to meet?</h2>
+              <p class="muted" style="margin-top:var(--sp-2)">{c.blurb}</p>
+            </>
+          )}
+          <ul class="person-grid" role="list">
+            {c.people.map((p) => (
+              <li>
+                <button class="person-card" type="button" data-pick-person={p.slug} data-track="book_appointment_click" data-cta-location={`booking_${c.id}`}>
+                  <span class="person-card__media"><Img name={p.photo} alt="" sizes="200px" widths={[400, 800]} /></span>
+                  <span class="person-card__name">{p.name}</span>
+                  <span class="person-card__title">{bookingTitle(p)}</span>
+                  {p.location && <span class="person-card__location">{p.location}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button class="textlink book-flow__back" type="button" data-book-back>All appointments</button>
+        </div>
+      ))}
+
+      {bookable.map((p) => (
+        <div class="book-flow__step" data-step={`cal-${p.slug}`} data-person-panel={p.slug}>
+          <button class="textlink book-flow__back" type="button" data-book-back>Choose a different person</button>
+          <div class="book-cal__who">
+            <div class="book-cal__photo"><Img name={p.photo} alt={p.alt} sizes="96px" widths={[200, 400]} /></div>
+            <div>
+              <h2 class="h3">Book with {p.name}</h2>
+              <p class="muted">{bookingTitle(p)}</p>
+              {p.location && <p class="book-cal__location">{p.location}</p>}
+            </div>
+          </div>
+          <p class="book-cal__rules">One-hour appointments, booked at least 24 hours ahead, with a one-hour buffer between visits. {BOOKING.hoursLabel}.</p>
+          <div
+            class="cal-facade"
+            id={`cal-${p.slug}`}
+            data-facade
+            data-person={p.slug}
+            data-title={`Book an appointment with ${p.name}`}
+            data-src={withBase(`/booking-embed-placeholder.html?person=${p.slug}`)}
+            data-live-src={CALENDAR_URLS[p.slug]}
+          >
+            <div class="cal-facade__inner">
+              <Icon name="cal" class="cal" />
+              <h3 class="h3">See open times</h3>
+              <p class="muted">Times come from {p.name.split(' ')[0]}’s calendar. On the live site, confirmations go to {p.name}. The calendar loads only when you ask for it.</p>
+              <button class="btn" type="button" data-track="book_appointment_click" data-cta-location={`booking_embed_${p.slug}`}>Show available times</button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
+    <p class="small muted book-flow__call">Prefer to call? <a class="link tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="booking">{SITE.telDisplay}</a></p>
   </div>
 </section>
 
@@ -59,9 +146,9 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
   <div class="wrap">
     <div class="section-head" data-reveal><span class="eyebrow">The showroom</span><h2 id="rooms-h">Rooms you can walk through</h2></div>
     <div class="room-strip">
-      <figure data-reveal style="--i:0"><Img name="showroom-living" alt="Living room set in the showroom" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Living</figcaption></figure>
-      <figure data-reveal style="--i:1"><Img name="p-barrel-amish-solid-wood-dining-collection-0" alt="Barrel solid wood dining set in a dining room" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Dining</figcaption></figure>
-      <figure data-reveal style="--i:2"><Img name="cat-amish-furniture-bedroom-furniture2" alt="Bedroom set with four-poster bed in the showroom" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Bedroom</figcaption></figure>
+      <figure data-reveal style="--i:0"><Img name="room-living" alt="A sofa and chairs on the Landrum showroom floor, under high beams and windows" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Living</figcaption></figure>
+      <figure data-reveal style="--i:1"><Img name="room-dining" alt="A live-edge dining table with a matching bench and chairs in the showroom" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Dining</figcaption></figure>
+      <figure data-reveal style="--i:2"><Img name="room-bedroom" alt="A hardwood bedroom set with a sleigh bed, chest and dresser" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Bedroom</figcaption></figure>
     </div>
   </div>
 </section>

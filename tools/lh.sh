@@ -4,7 +4,7 @@ set -u
 LH=/workspace/design-audit/node_modules/.bin/lighthouse
 export CHROME_PATH=/usr/bin/google-chrome
 TAG=${1:-r1}
-ORIGIN=${ORIGIN:-http://localhost:4321}
+ORIGIN=${ORIGIN:-http://localhost:4321/foothills-demo}
 EXTRA=${EXTRA:-}
 declare -A P=( [home]=/ [collection]=/collections/dining-benches [product]=/products/west-lake-mission-amish-bench-with-back [contact]=/pages/contact-us [book]=/pages/book )
 for k in home collection product contact book; do

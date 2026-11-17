@@ -34,7 +34,7 @@ const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', it
   { '@type': 'ListItem', position: 2, name: 'Dining', item: SITE.origin + '/collections/amish-dining-room-furniture' },
   { '@type': 'ListItem', position: 3, name: COLLECTION.title, item: `${SITE.origin}/collections/${COLLECTION.handle}` } ] };
 ---
-<Base title={`${COLLECTION.title} | Foothills Amish Furniture`} description="Amish dining benches in solid hardwood and reclaimed barnwood: trestle, storage and backed benches built to order to match your table. Landrum, SC showroom." path={`/collections/${COLLECTION.handle}`} nav="Benches" bodyClass="page-collection" lcp={{ name: 'p-amish-reclaimed-barnwood-1869-dining-collection-0', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[ld, crumbs]}>
+<Base title={`${COLLECTION.title} | Foothills Amish Furniture`} description="Amish dining benches in solid hardwood and reclaimed barnwood: trestle, storage and backed benches built to order to match your table. Landrum, SC showroom." path={`/collections/${COLLECTION.handle}`} nav="Benches" bodyClass="page-collection" lcp={{ name: 'collection-dining', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[ld, crumbs]}>
 <div class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li><a href={withBase('/collections/amish-dining-room-furniture')}>Dining</a></li><li aria-current="page">Dining benches</li></ol></nav>
   <header class="coll-hero">
@@ -43,7 +43,7 @@ const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', it
       <p class="lede">{COLLECTION.lede}</p>
       <p class="coll-hero__meta"><OpenStatus /><span>Many on display at {SITE.street}</span></p>
     </div>
-    <div class="coll-hero__media"><Img name="p-amish-reclaimed-barnwood-1869-dining-collection-0" alt="Reclaimed barnwood 1869 dining table with a matching bench in a dining room" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
+    <div class="coll-hero__media"><Img name="collection-dining" alt="A live-edge dining table with a matching bench and chairs in the showroom" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
   </header>
 
   <div class="coll" data-coll>

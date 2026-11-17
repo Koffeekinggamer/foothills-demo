@@ -20,9 +20,10 @@ const { h = 'Visit our Landrum showroom', eyebrow = 'Plan your visit', loc = 'vi
       <a class="btn btn--caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location={loc}><Icon name="pin" />Directions</a>
       <a class="btn btn--caps btn--secondary" href={SITE.book} data-track="book_appointment_click" data-cta-location={loc}>Book a visit</a>
     </div>
+    <p class="visit__book-note">One-hour appointments, booked at least 24 hours ahead, with an hour between visits.</p>
   </div>
   <div class="map-facade" data-facade data-title="Map to Foothills Amish Furniture" data-src={SITE.mapEmbed} data-reveal>
-    <Img name="storefront" alt="Foothills Amish Furniture storefront on E. Rutherford Street in Landrum" sizes="(min-width:1024px) 640px, 100vw" />
+    <Img name="store-exterior" alt="The Foothills Amish Furniture hanging sign and awning on E. Rutherford Street in Landrum" sizes="(min-width:1024px) 640px, 100vw" />
     <button class="btn btn--light btn--sm map-facade__btn" type="button" data-track="map_load" data-cta-location={loc}><Icon name="pin" />Show map</button>
   </div>
 </div>

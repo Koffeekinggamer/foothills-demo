@@ -86,6 +86,9 @@ const shortTitle = p.title.replace(/^Amish\s+/i, '');
       </dl>
     </div>
     <div class="form-card">
+      <!-- LIVE LEAD ROUTING: this form does not submit in the demo.
+           On the live site, submissions are emailed to travis@foothillsamish.com
+           and a text is sent to the store phone, (864) 457-2400. -->
       <form class="form" id="contact_form" action="#" method="post" data-form="product_inquiry" data-demo-form="request" novalidate>
         <div class="prefill"><Img name={p.image} alt="" sizes="48px" widths={[400]} /><div><span class="muted">About</span><br /><strong>{p.title}</strong></div></div>
         <input type="hidden" name="product_title" value={p.title} /><input type="hidden" name="product_handle" value={p.handle} /><input type="hidden" name="form_id" value="contact_form" />

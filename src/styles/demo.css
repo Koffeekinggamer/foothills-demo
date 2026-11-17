@@ -125,9 +125,9 @@
 .map-facade.is-loaded { aspect-ratio: 4 / 3; }
 
 /* Booking */
-.book-hero { padding-block: var(--sp-6) var(--sp-6); max-width: 46rem; margin-inline: auto; }
+.book-hero { padding-block: var(--sp-5) var(--sp-4); max-width: 46rem; margin-inline: auto; }
 .book-hero .lede { margin-top: var(--sp-4); }
-@media (min-width: 1024px) { .book-hero { padding-block: var(--sp-8) var(--sp-7); } }
+@media (min-width: 1024px) { .page-book .book-hero { padding-block: var(--sp-5) var(--sp-4); } .page-book .book-hero .lede { margin-top: var(--sp-3); } }
 @media (min-width: 1024px) { .booking { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--sp-9); align-items: start; } }
 .appt h2.h4 { font-family: var(--font-sans); font-size: var(--fs-body); font-weight: var(--fw-semibold); letter-spacing: 0; line-height: 1.35; }
 .room-strip { display: grid; gap: var(--grid-gap); }
@@ -167,3 +167,88 @@
 /* Below-the-fold trust sections: skip rendering (and their lazy images) until they approach the viewport. */
 .cv { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 [hidden] { display: none !important; }
+
+/* ---- Booking flow (category → person → calendar) ---------------------- */
+.book-flow { display: grid; gap: var(--sp-7); }
+.book-flow[data-ready] { gap: var(--sp-5); }
+.book-flow[data-ready] .book-flow__step { display: none; }
+.book-flow[data-ready] .book-flow__step.is-active { display: block; }
+.book-flow__step { scroll-margin-top: calc(var(--announce-h) + var(--header-h) + var(--sp-4)); }
+.book-flow__kicker { font-size: var(--fs-xs); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--sp-2); }
+.book-flow__kicker .tnum { font-weight: var(--fw-semibold); color: var(--accent); }
+.book-flow__back { margin-top: var(--sp-5); background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+.book-flow__call { margin-top: var(--sp-6); }
+.book-cats { list-style: none; padding: 0; margin: var(--sp-5) 0 0; display: grid; gap: var(--sp-3); }
+@media (min-width: 768px) { .book-cats { grid-template-columns: 1fr 1fr; gap: var(--sp-5); } }
+.book-cat { display: grid; width: 100%; text-align: left; padding: 0; background: var(--c-paper); border: 1px solid var(--c-line); color: inherit; font: inherit; cursor: pointer; overflow: hidden; }
+.book-cat:hover, .book-cat:focus-visible { border-color: var(--accent); outline: none; }
+.book-cat__media { aspect-ratio: 2 / 1; overflow: hidden; background: var(--c-linen); }
+.book-cat__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-4, 600ms) var(--ease-out, ease); }
+.book-cat:hover .book-cat__media img, .book-cat:focus-visible .book-cat__media img { transform: scale(1.03); }
+.book-cat__body { display: grid; gap: var(--sp-2); padding: var(--sp-5); }
+.book-cat__label { font-family: var(--font-serif); font-size: var(--fs-h3); letter-spacing: var(--ls-heading); }
+.book-cat__blurb { color: var(--text-muted); font-size: var(--fs-small); }
+.book-cat__who { font-size: var(--fs-xs); color: var(--accent); letter-spacing: 0.02em; }
+.book-intro { display: grid; gap: var(--sp-5); margin-bottom: var(--sp-5); }
+@media (min-width: 1024px) { .book-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-8); align-items: center; margin-bottom: var(--sp-6); } }
+.book-intro__media { position: relative; aspect-ratio: 2 / 1; overflow: hidden; background: var(--c-linen); }
+.book-intro__media > picture, .book-intro__media > img { width: 100%; height: 100%; }
+.book-intro__media img { width: 100%; height: 100%; object-fit: cover; }
+/* Once a category or person is chosen, drop the page hero so the photos and people fit the first screen. */
+.page-book:has(.book-flow[data-ready] [data-step].is-active:not([data-step="category"])) .book-hero { display: none; }
+.page-book:has(.book-flow[data-ready] [data-step].is-active:not([data-step="category"])) .book-flow { padding-top: var(--sp-4); }
+
+/* Photo detail inset: sits inside the main frame, offsets on the 8px spacing scale. */
+.cab-media { position: relative; }
+.cab-media__main { width: 100%; }
+.media-accent, .cab-media__accent {
+  position: absolute;
+  right: var(--sp-4); bottom: var(--sp-4);
+  width: 8rem; aspect-ratio: 3 / 2; overflow: hidden;
+  background: var(--c-linen);
+  box-shadow: 0 12px 28px rgba(31, 29, 26, 0.16);
+  outline: var(--sp-1) solid var(--c-paper);
+}
+@media (min-width: 1024px) {
+  .media-accent, .cab-media__accent { width: 10rem; right: var(--sp-5); bottom: var(--sp-5); }
+}
+.media-accent img, .cab-media__accent img { width: 100%; height: 100%; object-fit: cover; }
+.person-grid { list-style: none; padding: 0; margin: var(--sp-5) 0 0; display: grid; gap: var(--sp-4); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 768px) {
+  .person-grid { grid-template-columns: repeat(auto-fit, minmax(12rem, 16rem)); gap: var(--sp-5); }
+}
+.person-card { display: grid; gap: var(--sp-2); width: 100%; text-align: left; padding: 0; background: transparent; border: 0; color: inherit; font: inherit; cursor: pointer; }
+.person-card__media { aspect-ratio: 4 / 5; overflow: hidden; background: var(--c-linen); }
+.person-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.person-card:hover .person-card__media img, .person-card:focus-visible .person-card__media img { transform: scale(1.03); }
+.person-card__media img { transition: transform var(--dur-4, 600ms) var(--ease-out, ease); }
+.person-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.person-card__name { font-family: var(--font-serif); font-size: var(--fs-h4); font-weight: 500; letter-spacing: var(--ls-heading); }
+.person-card__title { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.4; }
+.person-card__location, .book-cal__location { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.4; }
+.book-cal__who { display: flex; gap: var(--sp-4); align-items: center; margin: var(--sp-4) 0 var(--sp-3); }
+.book-cal__photo { width: 4.5rem; aspect-ratio: 4 / 5; overflow: hidden; background: var(--c-linen); flex: none; }
+.book-cal__photo img { width: 100%; height: 100%; object-fit: cover; }
+.book-cal__rules { font-size: var(--fs-small); color: var(--text-muted); max-width: 40rem; margin-bottom: var(--sp-5); }
+.page-book .cal-facade { min-height: 28rem; }
+@media (min-width: 1024px) { .page-book .cal-facade { min-height: 36rem; } }
+@media (max-width: 1023px) { .page-book .cal-facade:has(iframe) { min-height: 44rem; } }
+
+/* ---- Team grid -------------------------------------------------------- */
+.team-grid { list-style: none; padding: 0; margin: var(--sp-7) 0 0; display: grid; gap: var(--sp-6) var(--grid-gap); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 768px) { .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .team-grid--page { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.team-card { display: grid; gap: var(--sp-2); align-content: start; color: inherit; text-decoration: none; }
+a.team-card:hover .team-card__name, a.team-card:focus-visible .team-card__name { color: var(--accent); }
+.team-card__media { aspect-ratio: 4 / 5; overflow: hidden; background: var(--c-linen); }
+.team-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.team-card__name { font-family: var(--font-serif); font-size: var(--fs-h4); font-weight: 500; letter-spacing: var(--ls-heading); margin: var(--sp-1) 0 0; }
+.team-card__title { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.4; }
+.team-card__bio { font-size: var(--fs-small); margin-top: var(--sp-2); }
+.team-hero .crumbs { margin-bottom: var(--sp-4); }
+.team-hero { padding-block: var(--sp-5) var(--sp-4); }
+@media (min-width: 1024px) { .team-hero { padding-block: var(--sp-6) var(--sp-5); } .team-grid--page { margin-top: var(--sp-5); } }
+.visit__book-note { margin-top: var(--sp-4); font-size: var(--fs-small); color: var(--text-muted); max-width: 32rem; }
+
+/* Contact hero uses the landscape storefront sign photo (4:3), not 4:5. */
+@media (min-width: 1024px) { .visit-hero__media { aspect-ratio: 4 / 3; } }

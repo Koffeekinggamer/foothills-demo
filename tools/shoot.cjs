@@ -1,6 +1,6 @@
 // Screenshots of the built demo at 390 and 1440. Usage: node tools/shoot.cjs [home,collection,...]
 const { chromium } = require('/workspace/design-audit/node_modules/playwright-core');
-const BASE = 'http://localhost:4321';
+const BASE = process.env.ORIGIN || 'http://localhost:4321/foothills-demo';
 const pages = { home: '/', collection: '/collections/dining-benches', product: '/products/west-lake-mission-amish-bench-with-back', contact: '/pages/contact-us', book: '/pages/book' };
 const only = process.argv[2] ? process.argv[2].split(',') : Object.keys(pages);
 (async () => {

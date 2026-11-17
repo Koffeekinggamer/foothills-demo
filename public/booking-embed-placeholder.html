@@ -1,4 +1,205 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Appointment schedule placeholder</title>
-<style>body{margin:0;font:16px/1.5 system-ui,sans-serif;color:#1F1D1A;background:#FAF8F4;display:grid;place-items:center;min-height:100vh;text-align:center;padding:24px;box-sizing:border-box}
-.b{max-width:30rem;border:1px dashed #8A8378;padding:32px;background:#fff}h1{font-size:20px;margin:0 0 8px}p{margin:8px 0;color:#5E5850}code{font-size:13px;background:#F2EEE7;padding:2px 6px;word-break:break-all}</style></head>
-<body><div class="b"><h1>Google Calendar appointment schedule</h1><p>On the live site this frame loads the Foothills booking page:</p><p><code>https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID?gv=true</code></p><p>Replace <code>SCHEDULE_ID</code> in <code>src/pages/pages/book.astro</code> once Judson creates the schedule.</p></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Appointment schedule placeholder</title>
+<style>
+@font-face{font-family:"Fraunces";src:url("fonts/fraunces-var-latin.woff2") format("woff2");font-weight:400 500;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url("fonts/inter-var-latin.woff2") format("woff2");font-weight:400 600;font-style:normal;font-display:swap}
+:root{
+  --paper:#FAF8F4; --linen:#F2EEE7; --line:#E2DCD2; --ink:#1F1D1A;
+  --muted:#5E5850; --forest:#3F5641; --forest-deep:#2F4231; --tint:#E6EBE4; --white:#fff;
+  --serif:"Fraunces","Georgia",serif; --sans:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);min-height:100%}
+body{padding:20px 20px 24px}
+.cal{max-width:28rem;margin:0 auto}
+@media (min-width:640px){.cal{max-width:46rem}.split{display:grid;grid-template-columns:minmax(0,1fr) 16.5rem;gap:28px;align-items:start}.slots{margin-top:0}}
+.cal h1{font-family:var(--serif);font-weight:400;font-size:1.35rem;letter-spacing:-.02em;margin:0 0 4px;line-height:1.25}
+.cal .who{color:var(--muted);font-size:.8125rem;margin:0 0 16px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px}
+.nav h2{font-family:var(--sans);font-size:.8125rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0}
+.nav button{width:2.25rem;height:2.25rem;border:1px solid var(--line);background:var(--white);color:var(--ink);cursor:pointer;font-size:1.1rem;line-height:1}
+.nav button:hover{border-color:var(--ink)}
+.nav button:disabled{opacity:.35;cursor:default;border-color:var(--line)}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;color:var(--muted);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.day{appearance:none;border:0;background:transparent;min-height:2.5rem;padding:0;font:inherit;color:var(--ink);cursor:pointer;border-radius:0}
+.day[disabled]{color:var(--line);cursor:default}
+.day.is-avail{background:var(--linen)}
+.day.is-avail:hover{background:var(--tint)}
+.day[aria-selected="true"]{background:var(--forest);color:var(--white)}
+.slots{margin-top:20px;display:grid;gap:8px}
+.slots h3{font-family:var(--sans);font-size:.8125rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px;color:var(--muted)}
+.slot{appearance:none;border:1px solid var(--line);background:var(--white);color:var(--ink);padding:10px 12px;font:inherit;text-align:left;cursor:pointer}
+.slot:hover,.slot:focus-visible{border-color:var(--forest);outline:none}
+.slot[aria-pressed="true"]{background:var(--tint);border-color:var(--forest)}
+.empty{color:var(--muted);font-size:.875rem;margin:8px 0 0}
+.note{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.8125rem}
+.confirm{margin-top:16px;padding:16px;background:var(--tint);color:var(--ink);font-size:.9375rem}
+.confirm strong{font-weight:600}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+</style>
+</head>
+<body>
+<div class="cal">
+  <h1>Choose a time</h1>
+  <p class="who" id="who">One-hour appointments, booked at least 24 hours ahead, with a one-hour buffer between visits. Monday–Saturday, 10 a.m. to 5 p.m. Eastern.</p>
+  <div class="nav">
+    <button type="button" id="prev" aria-label="Previous month">‹</button>
+    <h2 id="month"></h2>
+    <button type="button" id="next" aria-label="Next month">›</button>
+  </div>
+  <div class="split"><div class="cal-month"><div class="dow" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+  <div class="days" id="days" role="grid" aria-labelledby="month"></div>
+  </div><div class="slots" id="slots"></div></div>
+  <div class="confirm" id="confirm" hidden></div>
+  <p class="note" id="note">This is a demo calendar. No appointment is booked, and nothing is sent. On the live site this frame loads that person’s Google Calendar appointment schedule, and confirmations go to them.</p>
+</div>
+<script>
+(function () {
+  var PEOPLE = {
+    'lauren-manzin': 'Lauren Manzin',
+    'michael-holladay': 'Michael Holladay',
+    'lexi-wertheim': 'Lexi Wertheim',
+    'savannah-russel': 'Savannah Russel',
+    'kyra-yoder': 'Kyra Yoder'
+  };
+  var slug = new URLSearchParams(location.search).get('person') || '';
+  var person = PEOPLE[slug] || 'a furniture specialist';
+  var TZ = 'America/New_York';
+  var SLOT_MIN = 60;
+  var BUFFER_MIN = 60;
+  var NOTICE_MS = 24 * 60 * 60 * 1000;
+  var OPEN = 10 * 60, CLOSE = 17 * 60; // minutes from midnight
+  // 10:00, 12:00, 14:00, 16:00 — 1-hour appointments with a 1-hour gap
+  var STARTS = [10 * 60, 12 * 60, 14 * 60, 16 * 60];
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function nowET() {
+    var s = new Date().toLocaleString('en-US', { timeZone: TZ });
+    return new Date(s);
+  }
+  function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function atET(year, month, date, minutes) {
+    // Construct a Date whose local clock (this page is served / screenshotted in ET) matches.
+    // For correctness independent of host TZ, format via a known offset by using a UTC guess + format check.
+    var utc = Date.UTC(year, month, date, Math.floor(minutes/60), minutes%60, 0);
+    // Refine: get ET parts of this UTC instant and correct
+    function parts(ms) {
+      var p = {};
+      new Intl.DateTimeFormat('en-US', { timeZone: TZ, year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', hourCycle:'h23' })
+        .formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = +x.value; });
+      return p;
+    }
+    var wantM = year*10000 + (month+1)*100 + date;
+    var p = parts(utc);
+    var gotM = p.year*10000 + p.month*100 + p.day;
+    var gotMin = p.hour*60 + p.minute;
+    var delta = ((wantM - gotM) * 24 * 60 + (minutes - gotMin)) * 60 * 1000;
+    return new Date(utc + delta);
+  }
+  function fmtTime(mins) {
+    var h = Math.floor(mins/60), m = mins%60;
+    return ((h+11)%12+1) + (m ? ':' + String(m).padStart(2,'0') : '') + (h < 12 ? ' a.m.' : ' p.m.');
+  }
+
+  var earliest = new Date(nowET().getTime() + NOTICE_MS);
+  var view = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
+  var selected = null;
+
+  var who = document.getElementById('who');
+  who.textContent = 'Booking with ' + person + '.';
+
+  function slotsFor(year, month, date) {
+    var dow = new Date(year, month, date).getDay();
+    if (dow === 0) return [];
+    return STARTS.filter(function (st) {
+      if (st < OPEN || st + SLOT_MIN > CLOSE) return false;
+      var when = atET(year, month, date, st);
+      return when.getTime() >= earliest.getTime();
+    });
+  }
+  function hasSlots(year, month, date) { return slotsFor(year, month, date).length > 0; }
+
+  function render() {
+    var year = view.getFullYear(), month = view.getMonth();
+    document.getElementById('month').textContent = MONTHS[month] + ' ' + year;
+    var first = new Date(year, month, 1).getDay();
+    var dim = new Date(year, month+1, 0).getDate();
+    var days = document.getElementById('days');
+    days.innerHTML = '';
+    for (var i=0;i<first;i++) {
+      var e = document.createElement('span');
+      days.appendChild(e);
+    }
+    var thisMonthHas = false;
+    for (var d=1; d<=dim; d++) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day';
+      btn.textContent = d;
+      var avail = hasSlots(year, month, d);
+      if (avail) { btn.classList.add('is-avail'); thisMonthHas = true; }
+      else { btn.disabled = true; }
+      btn.setAttribute('aria-label', DAYS[new Date(year,month,d).getDay()] + ' ' + MONTHS[month] + ' ' + d);
+      if (selected && selected.y===year && selected.m===month && selected.d===d) btn.setAttribute('aria-selected','true');
+      (function (dd) {
+        btn.addEventListener('click', function () { selected = { y: year, m: month, d: dd }; render(); });
+      })(d);
+      days.appendChild(btn);
+    }
+    var prev = document.getElementById('prev');
+    var minView = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
+    prev.disabled = view.getTime() <= minView.getTime();
+    renderSlots();
+  }
+
+  function renderSlots() {
+    var box = document.getElementById('slots');
+    var conf = document.getElementById('confirm');
+    conf.hidden = true; conf.innerHTML = '';
+    if (!selected) {
+      box.innerHTML = '<p class="empty">Select a day with open times.</p>';
+      return;
+    }
+    var list = slotsFor(selected.y, selected.m, selected.d);
+    var h = document.createElement('h3');
+    h.id = 'slot-h';
+    h.textContent = DAYS[new Date(selected.y, selected.m, selected.d).getDay()] + ', ' + MONTHS[selected.m] + ' ' + selected.d;
+    box.innerHTML = '';
+    box.appendChild(h);
+    if (!list.length) {
+      var p = document.createElement('p'); p.className='empty'; p.textContent='No one-hour times left on this day.'; box.appendChild(p); return;
+    }
+    list.forEach(function (st) {
+      var b = document.createElement('button');
+      b.type='button'; b.className='slot';
+      b.textContent = fmtTime(st) + ' – ' + fmtTime(st + SLOT_MIN) + '  ·  1 hour';
+      b.addEventListener('click', function () {
+        box.querySelectorAll('.slot').forEach(function (x) { x.setAttribute('aria-pressed','false'); });
+        b.setAttribute('aria-pressed','true');
+        conf.hidden = false;
+        conf.innerHTML = '<strong>This is a demo.</strong> A one-hour appointment with ' + person + ' on ' +
+          DAYS[new Date(selected.y, selected.m, selected.d).getDay()] + ', ' + MONTHS[selected.m] + ' ' + selected.d +
+          ', from ' + fmtTime(st) + ' to ' + fmtTime(st + SLOT_MIN) + ' Eastern, would be reserved here. On the live site, confirmations go to ' + person + '. Nothing was booked or sent.';
+      });
+      box.appendChild(b);
+    });
+  }
+
+  document.getElementById('prev').addEventListener('click', function () {
+    view = new Date(view.getFullYear(), view.getMonth()-1, 1); selected=null; render();
+  });
+  document.getElementById('next').addEventListener('click', function () {
+    view = new Date(view.getFullYear(), view.getMonth()+1, 1); selected=null; render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

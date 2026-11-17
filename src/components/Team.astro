@@ -1,19 +1,26 @@
 ---
 import Img from './Img.astro';
 import { withBase } from '../data/url';
+import { TEAM_TEASER } from '../data/team';
 ---
 <section class="section band cv" aria-labelledby="team-h">
-  <div class="wrap split split--7-5">
-    <div class="split__copy" data-reveal>
+  <div class="wrap">
+    <div class="section-head" data-reveal>
       <span class="eyebrow eyebrow--rule">Our team</span>
       <h2 id="team-h">Real people, not a phone tree</h2>
       <p class="lede" style="margin-top:var(--sp-4)">When you call, you get a live, friendly furniture specialist, not voicemail.</p>
-      <ul class="team" role="list">
-        <li><strong>Judson &amp; Pat Miller</strong><span>Owners. Judson grew up Beachy Amish with a background in woodworking and construction; Pat comes from a Mennonite family.</span></li>
-        <li><strong>Trip</strong><span>Furniture specialist, and the name our customers mention most in their reviews.</span></li>
-      </ul>
-      <a class="textlink" href={withBase('/pages/our-team')}>Meet the whole team <span class="arrow" aria-hidden="true">→</span></a>
     </div>
-    <div class="split__media" data-reveal><Img name="showroom-014" alt="Sofa and chairs arranged in the Foothills showroom" sizes="(min-width:1024px) 480px, 100vw" /></div>
+    <ul class="team-grid" role="list">
+      {TEAM_TEASER.map((m, i) => (
+        <li data-reveal style={`--i:${i % 3}`}>
+          <a class="team-card team-card--teaser" href={withBase('/pages/our-team') + '#' + m.slug}>
+            <div class="team-card__media"><Img name={m.photo} alt={m.alt} sizes="(min-width:1024px) 200px, (min-width:768px) 30vw, 46vw" widths={[400, 800]} /></div>
+            <h3 class="team-card__name">{m.name}</h3>
+            <p class="team-card__title">{m.title}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p data-reveal style="margin-top:var(--sp-6)"><a class="textlink" href={withBase('/pages/our-team')}>Meet the whole team <span class="arrow" aria-hidden="true">→</span></a></p>
   </div>
 </section>

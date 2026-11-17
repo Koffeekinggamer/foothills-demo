@@ -6,6 +6,7 @@ import OpenStatus from '../components/OpenStatus.astro';
 import TrustStrip from '../components/TrustStrip.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Craft from '../components/Craft.astro';
+import Cabinetry from '../components/Cabinetry.astro';
 import Builders from '../components/Builders.astro';
 import Reviews from '../components/Reviews.astro';
 import Promise from '../components/Promise.astro';
@@ -18,12 +19,12 @@ import { productLd } from '../data/ld';
 
 // "View furniture" link text is a live GTM trigger (regex .*(view furniture).*): keep it on these six tiles.
 const tiles = [
-  ['Bedroom furniture', '/collections/bedroom-sets', 'cat-amish-furniture-bedroom-furniture2', 'Four-poster bed and nightstands in the Landrum showroom'],
-  ['Dining room furniture', '/collections/amish-dining-room-furniture', 'cat-amish-furniture-collection-dining-chairs', 'Dining tables and chairs on the showroom floor'],
-  ['Living room furniture', '/collections/living-room-furniture', 'showroom-living', 'Living room sofa and chairs in the showroom'],
-  ['Outdoor furniture', '/collections/amish-outdoor-furniture', 'cat-amish-furniture-outdoor-furniture3', 'Amish outdoor swing and chairs'],
-  ['Office furniture', '/collections/amish-office-furniture', 'showroom-interior', 'Desks and office chairs in the showroom'],
-  ['Live-edge furniture', '/pages/live-edge-furniture', 'live-edge-outdoor', 'Live-edge hardwood table outdoors'],
+  ['Bedroom furniture', '/collections/bedroom-sets', 'tile-bedroom', 'A bedroom set in the Landrum showroom'],
+  ['Dining room furniture', '/collections/amish-dining-room-furniture', 'tile-dining', 'A live-edge dining table with a bench and chairs in the showroom'],
+  ['Living room furniture', '/collections/living-room-furniture', 'tile-living', 'A sofa, armchair and ottoman styled in the Landrum showroom'],
+  ['Outdoor furniture', '/collections/amish-outdoor-furniture', 'tile-outdoor', 'A porch swing on a wooden deck'],
+  ['Office furniture', '/collections/amish-office-furniture', 'tile-office', 'A live-edge desk and chair in the showroom'],
+  ['Live-edge furniture', '/pages/live-edge-furniture', 'tile-live-edge', 'Live-edge tables and wood slabs in the showroom'],
 ];
 const featured = ['almanzo-amish-reclaimed-wood-bench', 'harvest-trestle-bench', 'west-lake-mission-amish-bench-with-back', 'bay-hill-trestle-bench']
   .map((h) => BENCHES.find((b) => b.handle === h)).filter(Boolean) as typeof BENCHES;
@@ -31,7 +32,7 @@ const feat = featured.length === 4 ? featured : BENCHES.slice(0, 4);
 const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Featured dining benches',
   itemListElement: feat.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: productLd(p) })) };
 ---
-<Base title="Foothills Amish Furniture in Landrum SC" description="Handcrafted Amish hardwood furniture, fabric and leather upholstery in Landrum, SC. Visit the largest Amish furniture showroom in the Foothills or order for nationwide delivery." path="/" lcp={{ name: 'showroom-012', sizes: '(min-width:1024px) 56vw, 100vw' }} jsonld={[itemList]} bodyClass="page-home">
+<Base title="Foothills Amish Furniture in Landrum SC" description="Handcrafted Amish hardwood furniture, fabric and leather upholstery in Landrum, SC. Visit the largest Amish furniture showroom in the Foothills or order for nationwide delivery." path="/" lcp={{ name: 'hero-living', sizes: '(min-width:1024px) 56vw, 100vw' }} jsonld={[itemList]} bodyClass="page-home">
 <section class="wrap hero">
   <div class="hero__copy">
     <span class="eyebrow eyebrow--rule">Landrum, SC · Ships nationwide</span>
@@ -44,7 +45,7 @@ const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 
     <p class="hero__meta"><OpenStatus /><span><a href={`tel:${SITE.tel}`} class="tnum" data-track="click_to_call" data-cta-location="hero">{SITE.telDisplay}</a></span></p>
   </div>
   <figure>
-    <div class="hero__media" data-parallax><Img name="showroom-012" alt="A cream armchair, ottoman and hardwood chest styled in the Landrum showroom" sizes="(min-width:1024px) 56vw, 100vw" eager /></div>
+    <div class="hero__media" data-parallax><Img name="hero-living" alt="Living room furniture in the Landrum showroom, with sofas, chairs and tables under high windows" sizes="(min-width:1024px) 56vw, 100vw" eager /></div>
     <figcaption class="hero__caption">Inside our Landrum showroom, 106 E. Rutherford St.</figcaption>
   </figure>
 </section>
@@ -64,7 +65,9 @@ const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 
   </div>
 </section>
 
-<Craft image="p-almanzo-amish-reclaimed-wood-dining-collection-0" alt="Almanzo reclaimed barnwood dining table and benches in a dining room" />
+<Cabinetry />
+
+<Craft image="craft-kitchen" alt="Upholstered barstools along a hardwood kitchen island in the showroom" />
 
 <section class="section" aria-labelledby="feat-h">
   <div class="wrap">

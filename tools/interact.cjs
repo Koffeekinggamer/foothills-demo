@@ -1,6 +1,6 @@
 // Smoke-test the interactive bits on the built demo.
 const { chromium } = require('/workspace/design-audit/node_modules/playwright-core');
-const B = 'http://localhost:4321';
+const B = process.env.ORIGIN || 'http://localhost:4321/foothills-demo';
 (async () => {
   const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, timezoneId: 'America/New_York' });
