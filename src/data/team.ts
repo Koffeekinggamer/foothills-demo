@@ -141,12 +141,20 @@ export const BOOKING_CATEGORIES = [
     id: 'cabinetry' as const,
     label: 'Cabinetry',
     blurb: 'Custom cabinets for the kitchen, bath or built-ins, in Landrum or Charleston.',
+    image: 'cab-fridge',
+    imageAlt: 'A stainless refrigerator set into custom cabinets, with a hardwood island in the foreground',
+    intro: 'cab-dishwasher',
+    introAlt: 'A hardwood-paneled dishwasher door opening on a kitchen island',
     people: TEAM.filter((m) => m.booking === 'cabinetry').sort((a, b) => (a.slug === 'lauren-manzin' ? -1 : b.slug === 'lauren-manzin' ? 1 : 0)),
   },
   {
     id: 'furniture' as const,
     label: 'Furniture',
     blurb: 'Furniture sales at the Landrum showroom, from design help to the pieces on the floor.',
+    image: 'hero-living',
+    imageAlt: 'Living room furniture in the Landrum showroom, with sofas, chairs and tables under high windows',
+    intro: undefined as string | undefined,
+    introAlt: undefined as string | undefined,
     people: TEAM.filter((m) => m.booking === 'furniture').sort((a, b) => {
       const order = ['lexi-wertheim', 'savannah-russel', 'kyra-yoder'];
       return order.indexOf(a.slug) - order.indexOf(b.slug);

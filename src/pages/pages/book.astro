@@ -54,9 +54,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
           {BOOKING_CATEGORIES.map((c) => (
             <li>
               <button class="book-cat" type="button" data-choose={c.id}>
-                <span class="book-cat__label">{c.label}</span>
-                <span class="book-cat__blurb">{c.blurb}</span>
-                <span class="book-cat__who">{c.people.map((p) => p.name.split(' ')[0]).join(', ')}</span>
+                <span class="book-cat__media"><Img name={c.image} alt="" sizes="(min-width:768px) 45vw, 100vw" widths={[400, 800, 1200, 1600, 2400]} /></span>
+                <span class="book-cat__body">
+                  <span class="book-cat__label">{c.label}</span>
+                  <span class="book-cat__blurb">{c.blurb}</span>
+                  <span class="book-cat__who">{c.people.map((p) => p.name.split(' ')[0]).join(', ')}</span>
+                </span>
               </button>
             </li>
           ))}
@@ -65,9 +68,22 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
 
       {BOOKING_CATEGORIES.map((c) => (
         <div class="book-flow__step" data-step={`people-${c.id}`}>
-          <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
-          <h2 class="h3">Who would you like to meet?</h2>
-          <p class="muted" style="margin-top:var(--sp-2)">{c.blurb}</p>
+          {c.intro ? (
+            <div class="book-intro">
+              <div class="book-intro__media"><Img name={c.intro} alt={c.introAlt} sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200, 1600, 2400]} /></div>
+              <div class="book-intro__copy">
+                <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
+                <h2 class="h3">Who would you like to meet?</h2>
+                <p class="muted" style="margin-top:var(--sp-2)">{c.blurb}</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
+              <h2 class="h3">Who would you like to meet?</h2>
+              <p class="muted" style="margin-top:var(--sp-2)">{c.blurb}</p>
+            </>
+          )}
           <ul class="person-grid" role="list">
             {c.people.map((p) => (
               <li>
@@ -123,7 +139,7 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
   <div class="wrap">
     <div class="section-head" data-reveal><span class="eyebrow">The showroom</span><h2 id="rooms-h">Rooms you can walk through</h2></div>
     <div class="room-strip">
-      <figure data-reveal style="--i:0"><Img name="room-living" alt="A sofa, armchair and ottoman styled in the Landrum showroom" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Living</figcaption></figure>
+      <figure data-reveal style="--i:0"><Img name="room-living" alt="A sofa and chairs on the Landrum showroom floor, under high beams and windows" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Living</figcaption></figure>
       <figure data-reveal style="--i:1"><Img name="room-dining" alt="A live-edge dining table with a matching bench and chairs in the showroom" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Dining</figcaption></figure>
       <figure data-reveal style="--i:2"><Img name="room-bedroom" alt="A hardwood bedroom set with a sleigh bed, chest and dresser" sizes="(min-width:1024px) 410px, (min-width:768px) 31vw, 100vw" widths={[400, 800]} /><figcaption>Bedroom</figcaption></figure>
     </div>

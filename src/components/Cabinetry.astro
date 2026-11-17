@@ -1,0 +1,24 @@
+---
+import Img from './Img.astro';
+import { SITE } from '../data/site';
+---
+<section class="section band cv" aria-labelledby="cab-h">
+  <div class="wrap split">
+    <div class="cab-media" data-reveal>
+      <div class="cab-media__main split__media split__media--room">
+        <Img name="cab-kitchen" alt="A hardwood kitchen island with upholstered stools and brass pendants, in front of custom cabinets" sizes="(min-width:1024px) 600px, 100vw" widths={[400, 800, 1200, 1600, 2400]} />
+      </div>
+      <div class="cab-media__accent">
+        <Img name="cab-sage" alt="A close view of painted kitchen cabinets with brass hardware and glass-front doors" sizes="(min-width:1024px) 176px, 136px" widths={[400, 800, 1200]} />
+      </div>
+    </div>
+    <div class="split__copy" data-reveal>
+      <span class="eyebrow eyebrow--rule">Custom cabinetry</span>
+      <h2 id="cab-h">Kitchens, baths and built-ins, designed with you</h2>
+      <p class="lede" style="margin-top:var(--sp-4)">Custom cabinets for the kitchen, bath or built-ins, with design help in Landrum or Charleston.</p>
+      <div class="btn-row">
+        <a class="btn" href={`${SITE.book}#cabinetry`} data-track="book_appointment_click" data-cta-location="home_cabinetry">Book a cabinetry visit</a>
+      </div>
+    </div>
+  </div>
+</section>
