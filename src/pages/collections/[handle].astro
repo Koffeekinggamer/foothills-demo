@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Icon from '../../components/Icon.astro';
+import OpenStatus from '../../components/OpenStatus.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Reviews from '../../components/Reviews.astro';
+import Promise from '../../components/Promise.astro';
+import Team from '../../components/Team.astro';
+import TrustStrip from '../../components/TrustStrip.astro';
+import { SITE } from '../../data/site';
+import { BENCHES, COLLECTION, woodLabel } from '../../data/catalog';
+import { productLd } from '../../data/ld';
+
+export function getStaticPaths() { return [{ params: { handle: COLLECTION.handle } }]; }
+
+const items = BENCHES;
+function counts(get: (p: typeof items[number]) => string[]) {
+  const m = new Map<string, number>();
+  items.forEach((p) => get(p).forEach((v) => m.set(v, (m.get(v) || 0) + 1)));
+  return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+const facets = [
+  { key: 'builder', title: 'Builder', opts: counts((p) => [p.vendor]) },
+  { key: 'wood', title: 'Wood (as shown)', opts: counts((p) => [woodLabel(p.wood)]) },
+  { key: 'room', title: 'Room', opts: counts((p) => p.rooms) },
+];
+const strip = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: COLLECTION.title, url: `${SITE.origin}/collections/${COLLECTION.handle}`,
+  mainEntity: { '@type': 'ItemList', numberOfItems: items.length, itemListElement: items.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: productLd(p) })) } };
+const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.origin + '/' },
+  { '@type': 'ListItem', position: 2, name: 'Dining', item: SITE.origin + '/collections/amish-dining-room-furniture' },
+  { '@type': 'ListItem', position: 3, name: COLLECTION.title, item: `${SITE.origin}/collections/${COLLECTION.handle}` } ] };
+---
+<Base title={`${COLLECTION.title} | Foothills Amish Furniture`} description="Amish dining benches in solid hardwood and reclaimed barnwood: trestle, storage and backed benches built to order to match your table. Landrum, SC showroom." path={`/collections/${COLLECTION.handle}`} nav="Benches" bodyClass="page-collection" lcp={{ name: 'p-amish-reclaimed-barnwood-1869-dining-collection-0', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[ld, crumbs]}>
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/collections/amish-dining-room-furniture">Dining</a></li><li aria-current="page">Dining benches</li></ol></nav>
+  <header class="coll-hero">
+    <div class="coll-hero__copy">
+      <h1>{COLLECTION.title}</h1>
+      <p class="lede">{COLLECTION.lede}</p>
+      <p class="coll-hero__meta"><OpenStatus /><span>Many on display at {SITE.street}</span></p>
+    </div>
+    <div class="coll-hero__media"><Img name="p-amish-reclaimed-barnwood-1869-dining-collection-0" alt="Reclaimed barnwood 1869 dining table with a matching bench in a dining room" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
+  </header>
+
+  <div class="coll" data-coll>
+    <aside class="rail" id="filters" aria-label="Filters">
+      <div class="rail__head"><h2 class="h4">Filter</h2><button class="link rail__clear" type="button" data-clear hidden>Clear all</button><button class="icon-btn rail__close" type="button" aria-label="Close filters" data-filters-toggle><Icon name="close" /></button></div>
+      {facets.map((f, fi) => (
+        <details class="facet" open>
+          <summary>{f.title}</summary>
+          <ul>{f.opts.map(([v, n]) => (
+            <li><label class="check"><input type="checkbox" name={f.key} value={v} /> {v}<span class="n tnum" data-count>{n}</span></label></li>
+          ))}</ul>
+        </details>
+      ))}
+      <button class="btn btn--block rail__done" type="button" data-filters-toggle>Show <span data-count-total>{items.length}</span> benches</button>
+    </aside>
+    <div>
+      <div class="coll-search">
+        <label class="sr-only" for="q">Search dining benches</label>
+        <Icon name="search" />
+        <input class="input" id="q" type="search" placeholder={`Search ${items.length} benches`} autocomplete="off" enterkeyhint="search" />
+      </div>
+      <div class="toolbar">
+        <button class="filter-btn" type="button" aria-controls="filters" aria-expanded="false" data-filters-toggle><Icon name="filter" />Filter <span class="count" data-active-count hidden>0</span></button>
+        <span class="toolbar__count tnum" aria-live="polite"><span data-count-shown>{items.length}</span> pieces</span>
+        <label><span class="sr-only">Sort</span><select class="select" data-sort><option value="featured">Featured</option><option value="az">Name, A–Z</option><option value="new">Newest</option></select></label>
+      </div>
+      <div class="active-chips" data-chips hidden></div>
+      <ul class="pgrid pgrid--3" role="list" data-grid>
+        {items.map((p, i) => (
+          <li data-i={i} data-name={p.title} data-created={p.created} data-builder={p.vendor} data-wood={woodLabel(p.wood)} data-room={p.rooms.join('|')}
+              data-text={`${p.title} ${p.vendor} ${woodLabel(p.wood)} ${p.rooms.join(' ')} ${p.collection || ''} ${strip(p.body_html).slice(0, 600)}`.toLowerCase()}>
+            <ProductCard p={p} eager={i < 2} />
+          </li>
+        ))}
+      </ul>
+      <div class="empty" data-empty hidden>
+        <h2 class="h3">No benches match that yet</h2>
+        <p class="muted">Most of our benches can be built in any wood and size. Tell us what you have in mind.</p>
+        <div class="btn-row"><button class="btn btn--secondary" type="button" data-clear>Clear search &amp; filters</button><a class="btn" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="collection_empty">Call {SITE.telDisplay}</a></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="coll-help" data-reveal>
+    <div><h2 class="h3">Matching a bench to your table?</h2><p class="muted" style="margin-top:var(--sp-2)">Bring your table length and finish, or a photo. We’ll match wood, stain and size in the showroom, and most benches are built to order.</p></div>
+    <div class="btn-row"><a class="btn" href={SITE.book} data-track="book_appointment_click" data-cta-location="collection_help">Book a visit</a><a class="btn btn--secondary" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="collection_help">Call {SITE.telDisplay}</a></div>
+  </section>
+</div>
+
+<section class="section--sm"><div class="wrap"><TrustStrip /></div></section>
+<Reviews count={3} h="What customers say about our dining furniture" />
+<Promise />
+<Team />
+
+<section class="section--sm"><div class="wrap prose" data-cms={`collections/${COLLECTION.handle}.description`}>
+  <h2>Amish dining benches, built to order</h2>
+  <p class="muted">A bench seats more people in less space and slides neatly under the table when it isn’t in use. Our Amish dining benches come in trestle, mission, storage and backed styles, in solid hardwoods like brown maple, cherry and quarter-sawn white oak, or in reclaimed barnwood from century-old Ohio barns. Most can be sized to your table and finished to match.</p>
+</div></section>
+
+<script is:inline src="/collection.js" defer></script>
+</Base>

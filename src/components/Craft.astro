@@ -1,0 +1,19 @@
+---
+import Img from './Img.astro';
+const { image = 'showroom-living', alt = 'A living room set styled in the Landrum showroom' } = Astro.props as { image?: string; alt?: string };
+---
+<section class="section band cv" aria-labelledby="craft-h">
+  <div class="wrap split">
+    <div class="split__media split__media--room" data-reveal><Img name={image} alt={alt} sizes="(min-width:1024px) 600px, 100vw" /></div>
+    <div class="split__copy" data-reveal>
+      <span class="eyebrow eyebrow--rule">Amish craftsmanship</span>
+      <h2 id="craft-h">Handcrafted the Amish way</h2>
+      <p class="lede" style="margin-top:var(--sp-4)">Each piece reflects time-honored traditions of integrity, simplicity and hard work, built by hand in solid American hardwood.</p>
+      <ul class="ticks">
+        <li>Solid brown maple, cherry, quarter-sawn white oak, hickory, walnut or reclaimed barnwood.</li>
+        <li>Mortise-and-tenon and peg joinery, built to order in your choice of wood, stain or paint, and size.</li>
+        <li>Free design help from our specialists, in the showroom or by phone.</li>
+      </ul>
+    </div>
+  </div>
+</section>

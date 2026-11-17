@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Icon from '../../components/Icon.astro';
+import OpenStatus from '../../components/OpenStatus.astro';
+import Hours from '../../components/Hours.astro';
+import Reviews from '../../components/Reviews.astro';
+import Promise from '../../components/Promise.astro';
+import Team from '../../components/Team.astro';
+import TrustStrip from '../../components/TrustStrip.astro';
+import Craft from '../../components/Craft.astro';
+import { SITE } from '../../data/site';
+const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Contact Foothills Amish Furniture', url: `${SITE.origin}/pages/contact-us`, about: { '@id': `${SITE.origin}/#store` } };
+---
+<Base title="Contact & Visit | Foothills Amish Furniture" description="Hours, directions and phone for the Foothills Amish Furniture showroom at 106 E. Rutherford St, Landrum, SC. Open Monday to Saturday, 10 a.m. to 5 p.m." path="/pages/contact-us" nav="Visit" bodyClass="page-contact" lcp={{ name: 'storefront', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[contactLd]}>
+<section class="wrap visit-hero" aria-labelledby="visit-h">
+  <div class="visit-hero__copy">
+    <span class="eyebrow eyebrow--rule">Contact &amp; visit</span>
+    <h1 id="visit-h">Come see us in Landrum</h1>
+    <p class="visit-hero__status"><OpenStatus long /></p>
+    <address class="visit-hero__addr">{SITE.street}<br />{SITE.city}, {SITE.region} {SITE.zip}</address>
+    <div class="visit-hero__actions">
+      <a class="btn btn--caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="contact_hero"><Icon name="pin" />Directions</a>
+      <a class="btn btn--secondary" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="contact_hero"><Icon name="phone" /><span class="tnum">{SITE.telDisplay}</span></a>
+    </div>
+    <div class="visit-hero__hours"><h2 class="eyebrow">Hours (Eastern)</h2><Hours /></div>
+  </div>
+  <div class="visit-hero__media"><Img name="storefront" alt="The Foothills Amish Furniture building on E. Rutherford Street in downtown Landrum" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
+</section>
+
+<section class="section--sm" style="padding-top:0"><div class="wrap"><TrustStrip /></div></section>
+
+<section class="section band" aria-labelledby="map-h">
+  <div class="wrap split" style="align-items:start">
+    <div class="map-facade map-facade--tall" data-facade data-title="Map to Foothills Amish Furniture" data-src={SITE.mapEmbed} data-reveal>
+      <Img name="showroom-interior" alt="Inside the Landrum showroom: dining and living furniture on display" sizes="(min-width:1024px) 600px, 100vw" />
+      <button class="btn btn--light btn--sm map-facade__btn" type="button" data-track="map_load" data-cta-location="contact_map"><Icon name="pin" />Show map</button>
+    </div>
+    <div data-reveal>
+      <span class="eyebrow eyebrow--rule">Getting here</span>
+      <h2 id="map-h">On Rutherford Street, downtown Landrum</h2>
+      <ul class="ticks">
+        <li>In the middle of downtown Landrum, at 106 E. Rutherford St. Tap Directions for turn-by-turn from wherever you are.</li>
+        <li>Make a day of it: customers tell us the other merchants downtown make Landrum worth the trip.</li>
+        <li>Can’t visit? Call or text us, and we deliver nationwide.</li>
+      </ul>
+      <div class="btn-row" style="margin-top:var(--sp-6)">
+        <a class="btn btn--caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="contact_map">Directions</a>
+        <a class="btn btn--caps btn--secondary" href={SITE.book} data-track="book_appointment_click" data-cta-location="contact_map">Book a visit</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="msg-h">
+  <div class="wrap split split--7-5" style="align-items:start">
+    <div class="form-card">
+      <h2 id="msg-h" class="h3" style="margin-bottom:var(--sp-5)">Send us a message</h2>
+      <form class="form" id="contact-us-page" action="#" method="post" data-form="contact_page" data-demo-form="message" novalidate>
+        <input type="hidden" name="form_id" value="contact-us-page" />
+        <div class="form__row form__row--2">
+          <div class="field"><label for="c-name">Name</label><input class="input" id="c-name" name="name" autocomplete="name" /></div>
+          <div class="field"><label for="c-phone">Phone <span class="opt">(optional)</span></label><input class="input" id="c-phone" name="phone" type="tel" autocomplete="tel" /></div>
+        </div>
+        <div class="field"><label for="c-email">Email</label><input class="input" id="c-email" name="email" type="email" autocomplete="email" required aria-describedby="c-email-err" /><span class="field__error" id="c-email-err" hidden>Enter a complete email address, like name@example.com.</span></div>
+        <div class="field"><label for="c-msg">Message</label><textarea class="textarea" id="c-msg" name="message" rows="4"></textarea></div>
+        <button class="btn" type="submit">Send message</button>
+        <p class="form__status" role="status" tabindex="-1" hidden></p>
+      </form>
+    </div>
+    <div>
+      <span class="eyebrow eyebrow--rule">Other ways to reach us</span>
+      <dl class="visit__facts">
+        <div><dt>Phone</dt><dd><a class="tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="contact">{SITE.telDisplay}</a><br /><span class="muted small">A real person answers, not a phone tree.</span></dd></div>
+        <div><dt>Text</dt><dd><a class="link" href={SITE.sms} data-podium data-track="text_us_click" data-cta-location="contact">Text a furniture specialist</a></dd></div>
+        <div><dt>Appointment</dt><dd><a class="link" href={SITE.book} data-track="book_appointment_click" data-cta-location="contact">Reserve time with a specialist</a></dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<Craft image="showroom-living" alt="A living room set styled in the Landrum showroom" />
+<Reviews count={3} />
+<Team />
+<Promise />
+</Base>

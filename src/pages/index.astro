@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import Img from '../components/Img.astro';
+import Icon from '../components/Icon.astro';
+import OpenStatus from '../components/OpenStatus.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Craft from '../components/Craft.astro';
+import Builders from '../components/Builders.astro';
+import Reviews from '../components/Reviews.astro';
+import Promise from '../components/Promise.astro';
+import Team from '../components/Team.astro';
+import Visit from '../components/Visit.astro';
+import { SITE } from '../data/site';
+import { BENCHES } from '../data/catalog';
+import { productLd } from '../data/ld';
+
+// "View furniture" link text is a live GTM trigger (regex .*(view furniture).*): keep it on these six tiles.
+const tiles = [
+  ['Bedroom furniture', '/collections/bedroom-sets', 'cat-amish-furniture-bedroom-furniture2', 'Four-poster bed and nightstands in the Landrum showroom'],
+  ['Dining room furniture', '/collections/amish-dining-room-furniture', 'cat-amish-furniture-collection-dining-chairs', 'Dining tables and chairs on the showroom floor'],
+  ['Living room furniture', '/collections/living-room-furniture', 'showroom-living', 'Living room sofa and chairs in the showroom'],
+  ['Outdoor furniture', '/collections/amish-outdoor-furniture', 'cat-amish-furniture-outdoor-furniture3', 'Amish outdoor swing and chairs'],
+  ['Office furniture', '/collections/amish-office-furniture', 'showroom-interior', 'Desks and office chairs in the showroom'],
+  ['Live-edge furniture', '/pages/live-edge-furniture', 'live-edge-outdoor', 'Live-edge hardwood table outdoors'],
+];
+const featured = ['almanzo-amish-reclaimed-wood-bench', 'harvest-trestle-bench', 'west-lake-mission-amish-bench-with-back', 'bay-hill-trestle-bench']
+  .map((h) => BENCHES.find((b) => b.handle === h)).filter(Boolean) as typeof BENCHES;
+const feat = featured.length === 4 ? featured : BENCHES.slice(0, 4);
+const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Featured dining benches',
+  itemListElement: feat.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: productLd(p) })) };
+---
+<Base title="Foothills Amish Furniture in Landrum SC" description="Handcrafted Amish hardwood furniture, fabric and leather upholstery in Landrum, SC. Visit the largest Amish furniture showroom in the Foothills or order for nationwide delivery." path="/" lcp={{ name: 'showroom-012', sizes: '(min-width:1024px) 56vw, 100vw' }} jsonld={[itemList]} bodyClass="page-home">
+<section class="wrap hero">
+  <div class="hero__copy">
+    <span class="eyebrow eyebrow--rule">Landrum, SC · Ships nationwide</span>
+    <h1 class="display">The largest Amish furniture store in the Foothills</h1>
+    <p class="lede">Handcrafted Amish hardwood furniture, fabric and leather upholstery, made in the USA and delivered to your door.</p>
+    <div class="btn-row hero__actions">
+      <a class="btn" href="/collections/dining-benches" data-track="shop_click" data-cta-location="hero">Shop furniture</a>
+      <a class="btn btn--secondary" href={SITE.book} data-track="book_appointment_click" data-cta-location="hero">Book a visit</a>
+    </div>
+    <p class="hero__meta"><OpenStatus /><span><a href={`tel:${SITE.tel}`} class="tnum" data-track="click_to_call" data-cta-location="hero">{SITE.telDisplay}</a></span></p>
+  </div>
+  <figure>
+    <div class="hero__media" data-parallax><Img name="showroom-012" alt="A cream armchair, ottoman and hardwood chest styled in the Landrum showroom" sizes="(min-width:1024px) 56vw, 100vw" eager /></div>
+    <figcaption class="hero__caption">Inside our Landrum showroom, 106 E. Rutherford St.</figcaption>
+  </figure>
+</section>
+
+<section class="section--sm" style="padding-top:0"><div class="wrap"><TrustStrip /></div></section>
+
+<section class="section" aria-labelledby="rooms-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">Shop by room</span><h2 id="rooms-h">Traditional craftsmanship. Modern style.</h2><p class="lede">Customizable, handcrafted furniture at an approachable price, built to last for generations.</p></div>
+    <ul class="tiles" role="list">
+      {tiles.map(([t, h, im, alt], i) => (
+        <li data-reveal style={`--i:${i % 3}`}><a class="tile" href={h} data-track="view_furniture_click" data-cta-location="home_tiles">
+          <div class="tile__media"><Img name={im} alt={alt} sizes="(min-width:1280px) 410px, (min-width:768px) 31vw, 46vw" widths={[400, 800]} /></div>
+          <h3 class="tile__title">{t}</h3><span class="tile__cta">View furniture <span aria-hidden="true">→</span></span></a></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<Craft image="p-almanzo-amish-reclaimed-wood-dining-collection-0" alt="Almanzo reclaimed barnwood dining table and benches in a dining room" />
+
+<section class="section" aria-labelledby="feat-h">
+  <div class="wrap">
+    <div class="section-head section-head--row" data-reveal><div><span class="eyebrow">Dining benches</span><h2 id="feat-h">Pull up a bench</h2></div><a class="textlink" href="/collections/dining-benches">All dining benches <span class="arrow" aria-hidden="true">→</span></a></div>
+    <ul class="pgrid pgrid--4" role="list">{feat.map((p, i) => <li data-reveal style={`--i:${i}`}><ProductCard p={p} /></li>)}</ul>
+  </div>
+</section>
+
+<Reviews />
+<Builders />
+<Promise />
+<Team />
+
+<section class="section" id="visit"><div class="wrap"><Visit /></div></section>
+</Base>

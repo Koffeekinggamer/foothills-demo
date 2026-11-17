@@ -1,0 +1,13 @@
+---
+import { HOURS, DAY_NAMES } from '../data/site';
+const order = [1, 2, 3, 4, 5, 6, 0];
+const fmt = (m: number) => { const h = Math.floor(m / 60), hh = ((h + 11) % 12) + 1; return `${hh} ${h < 12 ? 'a.m.' : 'p.m.'}`; };
+---
+<table class="hours-table">
+  <caption class="sr-only">Showroom hours, Eastern Time</caption>
+  <tbody>
+    {order.map((d) => { const h = HOURS[d]; return (
+      <tr data-day={d}><th scope="row">{DAY_NAMES[d]}</th><td class="tnum">{h ? `${fmt(h[0])}–${fmt(h[1])}` : 'Closed'}</td></tr>
+    ); })}
+  </tbody>
+</table>

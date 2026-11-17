@@ -1,0 +1,28 @@
+---
+import Img from './Img.astro';
+import Icon from './Icon.astro';
+import OpenStatus from './OpenStatus.astro';
+import Hours from './Hours.astro';
+import { SITE } from '../data/site';
+const { h = 'Visit our Landrum showroom', eyebrow = 'Plan your visit', loc = 'visit' } = Astro.props as { h?: string; eyebrow?: string; loc?: string };
+---
+<div class="visit">
+  <div data-reveal>
+    <span class="eyebrow eyebrow--rule">{eyebrow}</span>
+    <h2>{h}</h2>
+    <p class="visit__status"><OpenStatus long /></p>
+    <dl class="visit__facts">
+      <div><dt>Address</dt><dd>{SITE.street}<br />{SITE.city}, {SITE.region} {SITE.zip}</dd></div>
+      <div><dt>Hours</dt><dd><Hours /></dd></div>
+      <div><dt>Phone</dt><dd><a class="tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location={loc}>{SITE.telDisplay}</a></dd></div>
+    </dl>
+    <div class="btn-row" style="margin-top:var(--sp-6)">
+      <a class="btn btn--caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location={loc}><Icon name="pin" />Directions</a>
+      <a class="btn btn--caps btn--secondary" href={SITE.book} data-track="book_appointment_click" data-cta-location={loc}>Book a visit</a>
+    </div>
+  </div>
+  <div class="map-facade" data-facade data-title="Map to Foothills Amish Furniture" data-src={SITE.mapEmbed} data-reveal>
+    <Img name="storefront" alt="Foothills Amish Furniture storefront on E. Rutherford Street in Landrum" sizes="(min-width:1024px) 640px, 100vw" />
+    <button class="btn btn--light btn--sm map-facade__btn" type="button" data-track="map_load" data-cta-location={loc}><Icon name="pin" />Show map</button>
+  </div>
+</div>

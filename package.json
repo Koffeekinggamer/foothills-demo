@@ -1,0 +1,16 @@
+{
+  "name": "foothills-demo",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "serve": "node serve.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.4.12",
+    "sharp": "^0.35.5"
+  }
+}

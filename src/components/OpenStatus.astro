@@ -1,0 +1,5 @@
+---
+// Server-rendered fallback; public/site.js rewrites it in America/New_York time on load.
+const { class: cls = '', long = false } = Astro.props as { class?: string; long?: boolean };
+---
+<span class={`status ${cls}`} data-open-status data-long={long ? '1' : undefined}><span class="status__dot" aria-hidden="true"></span><span class="status__text">Mon–Sat 10 a.m.–5 p.m.</span></span>

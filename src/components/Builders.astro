@@ -1,0 +1,19 @@
+---
+import { BUILDERS } from '../data/site';
+const { highlight } = Astro.props as { highlight?: string };
+const list = highlight ? [...BUILDERS].sort((a, b) => (a.name === highlight ? -1 : b.name === highlight ? 1 : 0)) : BUILDERS;
+---
+<section class="section cv" aria-labelledby="builders-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Builder stories</span>
+      <h2 id="builders-h">Meet the workshops behind the furniture</h2>
+      <p class="lede">Our furniture comes straight from Amish wood shops in Ohio, Pennsylvania and Indiana, where integrity, simplicity and hard work are a way of life.</p>
+    </div>
+    <ul class="trio" role="list">
+      {list.map((b, i) => (
+        <li data-reveal style={`--i:${i}`}><span class="num">{b.where}</span><h3>{b.name}</h3><p>{b.text}</p></li>
+      ))}
+    </ul>
+  </div>
+</section>
