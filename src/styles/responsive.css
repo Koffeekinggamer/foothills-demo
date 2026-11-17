@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Responsive QA layer (responsive-qa branch, 2026-11-17)
+   Loaded last. Fixes found by the automated pass at 360–1920px:
+   overflow, touch targets, mobile type size, tablet grids and layouts.
+   Breakpoints: 768 (tablet), 1024 (desktop nav), 1280 (wide).
+   ========================================================================== */
+
+/* ---- 1. Overflow ------------------------------------------------------- */
+/* Long button labels ("Book an in-store appointment") may wrap instead of
+   pushing the page wider than a 360px phone. Short labels look unchanged. */
+.btn { white-space: normal; text-align: center; line-height: 1.2; padding-block: .5rem; text-wrap: balance; }
+.header__cta, .signup .btn, .actionbar a, a.btn[href^="tel:"] { white-space: nowrap; }
+/* Grid children may shrink below their content's min width. */
+.lseo > *, .visit-hero > *, .visit > *, .pdp > *, .coll > * { min-width: 0; }
+.visit-hero__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 399px) { .visit-hero__actions { grid-template-columns: 1fr; max-width: none; } }
+
+/* ---- 2. Touch targets (44px, phones and tablets incl. touch landscape) - */
+.btn--sm { --btn-h: 2.75rem; }
+.brand { padding-block: 2px; }
+.facet summary { min-height: 2.75rem; }
+.check { min-height: 2.75rem; }
+@media (min-width: 1024px) {
+  .nav > ul > li > a { min-width: 2.75rem; justify-content: center; }
+  .header__tel { min-width: 2.75rem; justify-content: center; }
+}
+@media (max-width: 1023px), (pointer: coarse) {
+  /* Footer link lists: full 44px rows. */
+  .footer__links ul { gap: 0; }
+  .footer__links a { display: inline-flex; align-items: center; min-height: 2.75rem; min-width: 2.75rem; padding-block: 0; }
+  /* Small standalone text links (phone, directions, address): grow the hit
+     area with padding and cancel it with negative margin so layout is unchanged. */
+  .announce__addr, .footer a.tnum, .footer a.u-caps, .footer__base a,
+  .visit__facts a, .infocard a, .visit-hero a.link, .loc a.link, a.link.tnum {
+    display: inline-flex; align-items: center; min-height: 2.75rem; margin-block: -.75rem; min-width: 2.75rem;
+  }
+  .footer__base a { justify-content: center; }
+}
+
+/* ---- 3. Mobile type: running text at 16px minimum ---------------------- */
+@media (max-width: 767px) {
+  .visit__book-note, .pdp__features, .specs div, .team-card__bio, .truststrip li,
+  .series ul, .series .sub, .hero__meta, .coll-hero__meta, .pdp__status, .dates p { font-size: var(--fs-body); }
+  .team-card__title { font-size: var(--fs-small); }
+  .truststrip { gap: var(--sp-5) var(--sp-4); }
+}
+
+/* ---- 4. Tablet grids: no orphaned single cards ------------------------- */
+/* Four-card rows (related products, dining benches): 2×2 on tablet, 4 across from 1024. */
+@media (min-width: 768px) and (max-width: 1023px) { .pgrid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .pgrid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Four-person team rows (cabinetry, collection pages): 2×2 on tablet. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .team-grid--4, .team-grid:has(> li:nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) { .team-grid:has(> li:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Full team page (13 people): rows stay centred so the last one never hangs left. */
+.team-grid--page { --cols: 2; display: flex; flex-wrap: wrap; justify-content: center; }
+.team-grid--page > li { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--grid-gap)) / var(--cols)); }
+@media (min-width: 768px) { .team-grid--page { --cols: 3; } }
+@media (min-width: 1024px) { .team-grid--page { --cols: 4; } }
+@media (min-width: 1440px) { .team-grid--page { --cols: 5; } }
+/* Five room tiles on tablet: two large over three. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tiles--5 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .tiles--5 > li { grid-column: span 2; }
+  .tiles--5 > li:nth-child(-n+2) { grid-column: span 3; }
+  .tiles--5 > li:nth-child(-n+2) .tile__media { aspect-ratio: 4 / 3; }
+}
+/* Reviews: three narrow serif columns were cramped at 768–1023; 2 + 1 wide. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .reviews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reviews > li:nth-child(3):last-child { grid-column: 1 / -1; }
+}
+
+/* ---- 5. Tablet layouts ------------------------------------------------- */
+/* Product page: gallery and details side by side from 768. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pdp { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-6); padding-top: var(--sp-5); }
+  .page-product .gallery { position: sticky; top: calc(var(--header-h-m) + var(--sp-4)); }
+  .pdp__info .truststrip { grid-template-columns: 1fr; }
+}
+/* Visit block: details beside the photo/map from 768. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .visit { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-7); align-items: start; }
+}
+
+/* ---- 6. Header at 1024–1279: 44px nav targets still fit on one line ---- */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .header__inner { gap: var(--sp-4); }
+  .nav > ul { gap: .75rem; }
+}
+/* More small links that need 44px hit areas on touch screens. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .crumbs a, .hero__meta a, .sitemap a, .rooms-index__subs a { display: inline-flex; align-items: center; min-height: 2.75rem; margin-block: -.75rem; min-width: 2.75rem; }
+  .crumbs ol { row-gap: var(--sp-4); }
+}
+@media (max-width: 767px) {
+  .book-hero__status, .partners p { font-size: var(--fs-body); }
+}

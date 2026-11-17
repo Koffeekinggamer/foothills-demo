@@ -9,7 +9,7 @@ const handler = (req, res) => {
   if (p === '/foothills-demo' || p.startsWith('/foothills-demo/')) p = p.slice('/foothills-demo'.length) || '/';
   let f = path.join(root, p);
   if (!f.startsWith(root)) { res.writeHead(403); res.end(); return; }
-  if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
+  if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = fs.existsSync(path.join(f, 'index.html')) || !fs.existsSync(f + '.html') ? path.join(f, 'index.html') : f + '.html'; // like GitHub Pages: /collections -> collections.html
   else if (!fs.existsSync(f) && fs.existsSync(f + '.html')) f = f + '.html';
   if (!fs.existsSync(f)) { res.writeHead(404, { 'content-type': 'text/plain' }); res.end('Not in demo'); return; }
   const ext = path.extname(f); const body = fs.readFileSync(f);

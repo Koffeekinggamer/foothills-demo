@@ -88,7 +88,8 @@ def piece(p, default_room, primary):
 
 def fetch_img(src, dest):
     if os.path.exists(dest): return True
-    url = src + ('&' if '?' in src else '?') + 'width=1200'
+    # Shopify's ?width= resize drops PNG transparency (backgrounds came out flat green), so fetch PNGs at full size.
+    url = src if src.split('?')[0].lower().endswith('.png') else src + ('&' if '?' in src else '?') + 'width=1200'
     r = subprocess.run(['curl', '-sL', '--retry', '4', '--retry-all-errors', '-A', 'Mozilla/5.0', url], capture_output=True)
     try:
         im = Image.open(io.BytesIO(r.stdout)).convert('RGBA')
