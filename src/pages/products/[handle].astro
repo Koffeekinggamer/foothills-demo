@@ -11,32 +11,45 @@ import Team from '../../components/Team.astro';
 import TrustStrip from '../../components/TrustStrip.astro';
 import { SITE } from '../../data/site';
 import { withBase } from '../../data/url';
-import { BENCHES, COLLECTION, woodLabel, type Piece } from '../../data/catalog';
+import { PRODUCTS, COLLECTIONS, items as itemsOf, homeOf, woodLabel, type Piece } from '../../data/catalog';
+import { POOL } from '../../data/collhero';
 import { productLd } from '../../data/ld';
 
-export function getStaticPaths() { return BENCHES.map((p) => ({ params: { handle: p.handle }, props: { p } })); }
+export function getStaticPaths() { return Object.values(PRODUCTS).map((p) => ({ params: { handle: p.handle }, props: { p } })); }
 const { p } = Astro.props as { p: Piece };
+const home = homeOf(p);
+const room = COLLECTIONS[home.parent!];
+const isBench = home.handle === 'dining-benches';
+const roomWord = room.label.toLowerCase();
+const material = ['Poly lumber', 'Upholstered', 'Mattress'].includes(p.wood);
+const JUNK = /^(call or visit|sku\b|standard features:?$|the following options|options\/features|features:?$|visit our|for more details)/i;
 
-const rooms: [string, string][] = p.vendor === 'Urban Barnwood'
-  ? [['p-almanzo-amish-reclaimed-wood-dining-collection-0', 'Urban Barnwood Almanzo reclaimed wood dining set in a dining room'], ['p-amish-reclaimed-barnwood-1869-dining-collection-0', 'Reclaimed barnwood 1869 dining set with bench in a dining room']]
-  : [['p-barrel-amish-solid-wood-dining-collection-0', 'Solid wood dining set styled in a dining room'], ['showroom-interior', 'Dining and living furniture on the Landrum showroom floor']];
+const rooms: [string, string][] = isBench
+  ? (p.vendor === 'Urban Barnwood'
+    ? [['p-almanzo-amish-reclaimed-wood-dining-collection-0', 'Urban Barnwood Almanzo reclaimed wood dining set in a dining room'], ['p-amish-reclaimed-barnwood-1869-dining-collection-0', 'Reclaimed barnwood 1869 dining set with bench in a dining room']]
+    : [['p-barrel-amish-solid-wood-dining-collection-0', 'Solid wood dining set styled in a dining room'], ['showroom-interior', 'Dining and living furniture on the Landrum showroom floor']])
+  : POOL[room.handle].slice(0, 2);
 const gallery: { name: string; alt: string; room: boolean }[] = [{ name: p.image, alt: `${p.title}, ${woodLabel(p.wood).toLowerCase()}`, room: false }, ...rooms.map(([name, alt]) => ({ name, alt, room: true }))];
-const related = BENCHES.filter((b) => b.handle !== p.handle && b.vendor === p.vendor).slice(0, 4);
-const rel = related.length >= 4 ? related : [...related, ...BENCHES.filter((b) => b.handle !== p.handle && b.vendor !== p.vendor)].slice(0, 4);
+const pool = itemsOf(home.handle).filter((b) => b.handle !== p.handle);
+const related = pool.filter((b) => b.vendor === p.vendor).slice(0, 4);
+const more = [...pool.filter((b) => b.vendor !== p.vendor), ...itemsOf(room.handle).filter((b) => b.handle !== p.handle && !pool.includes(b))];
+const rel = related.length >= 4 ? related : [...related, ...more].slice(0, 4);
 const ld = { '@context': 'https://schema.org', ...productLd(p) };
 const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
   { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.origin + '/' },
-  { '@type': 'ListItem', position: 2, name: COLLECTION.title, item: `${SITE.origin}/collections/${COLLECTION.handle}` },
-  { '@type': 'ListItem', position: 3, name: p.title, item: `${SITE.origin}/products/${p.handle}` } ] };
+  { '@type': 'ListItem', position: 2, name: room.label, item: `${SITE.origin}/collections/${room.handle}` },
+  { '@type': 'ListItem', position: 3, name: home.label, item: `${SITE.origin}/collections/${home.handle}` },
+  { '@type': 'ListItem', position: 4, name: p.title, item: `${SITE.origin}/products/${p.handle}` } ] };
 const opts = (p.dims || '').replace(/^(Dimensions( & Options)?|Sizes?)\s*:?\s*/i, '');
 const isSpec = (t: string) => /\d+(\.\d+)?\s*["”″]\s*(W|D|H|x|Long|L\b)/i.test(t) || /^(Available|Pictured|SKU)/i.test(t);
-const descParas = p.paras.filter((t) => !isSpec(t)).slice(0, 2);
-const specParas = p.paras.filter(isSpec).slice(0, 2);
+const descParas = p.paras.filter((t) => !isSpec(t) && !JUNK.test(t) && t !== p.dims).slice(0, 2);
+const bullets = (p.bullets || []).filter((t) => t !== p.dims && !JUNK.test(t)).slice(0, 8);
+const specParas = p.paras.filter((t) => isSpec(t) && t !== p.dims && !/^SKU/i.test(t)).slice(0, 2);
 const shortTitle = p.title.replace(/^Amish\s+/i, '');
 ---
-<Base title={`${p.title} | Foothills Amish Furniture`} description={`${p.title} by ${p.vendor}. Amish-made, built to order in your choice of wood and finish. See it at our Landrum, SC showroom.`} path={`/products/${p.handle}`} nav="Benches" bodyClass="page-product" product={p.handle} lcp={{ name: p.image, sizes: '(min-width:1024px) 54vw, 100vw' }} jsonld={[ld, crumbs]}>
+<Base title={`${p.title} | Foothills Amish Furniture`} description={`${p.title} by ${p.vendor}. Amish-made, built to order in your choice of wood and finish. See it at our Landrum, SC showroom.`} path={`/products/${p.handle}`} nav={isBench ? 'Benches' : room.label} bodyClass="page-product" product={p.handle} lcp={{ name: p.image, sizes: '(min-width:1024px) 54vw, 100vw' }} jsonld={[ld, crumbs]}>
 <div class="wrap">
-  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li><a href={withBase(`/collections/${COLLECTION.handle}`)}>Dining benches</a></li><li aria-current="page">{p.title}</li></ol></nav>
+  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li><a href={withBase(`/collections/${room.handle}`)}>{room.label}</a></li><li><a href={withBase(`/collections/${home.handle}`)}>{isBench ? 'Dining benches' : home.label}</a></li><li aria-current="page">{p.title}</li></ol></nav>
   <div class="pdp">
     <div class="gallery">
       <div class="gallery__main"><Img name={gallery[0].name} alt={gallery[0].alt} sizes="(min-width:1024px) 54vw, 100vw" eager /></div>
@@ -44,10 +57,10 @@ const shortTitle = p.title.replace(/^Amish\s+/i, '');
       <ul class="gallery__thumbs" role="list">
         {gallery.map((g, i) => <li><button type="button" aria-label={`Show image ${i + 1}: ${g.room ? 'room photo' : 'product photo'}`} aria-current={i === 0 ? 'true' : undefined} data-room={g.room ? '' : undefined} class={g.room ? 'is-room' : undefined}><Img name={g.name} alt="" sizes="120px" widths={[400]} /></button></li>)}
       </ul>
-      <p class="gallery__note small muted">Room photos show similar Amish dining furniture styled in a home and in our showroom.</p>
+      <p class="gallery__note small muted">Room photos show similar Amish {roomWord} furniture styled in a home and in our showroom.</p>
     </div>
     <div class="pdp__info">
-      <span class="eyebrow">Dining · Benches</span>
+      <span class="eyebrow">{room.label} · {home.label}</span>
       <h1 class="h1">{p.title}</h1>
       <p class="pdp__maker">By {p.vendor}{p.collection ? ` · ${p.collection}` : ''}</p>
       <div class="pdp__ctas">
@@ -59,17 +72,20 @@ const shortTitle = p.title.replace(/^Amish\s+/i, '');
           <a href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="pdp"><Icon name="pin" />Directions</a>
         </div>
       </div>
-      <p class="pdp__status"><OpenStatus /><span>See benches like this at {SITE.street}, Landrum</span></p>
-      <p class="pdp__note">Built to order in solid wood by an Amish workshop. Choose your wood, stain or paint, and size. Pricing depends on your options, so ask us for a quote.</p>
+      <p class="pdp__status"><OpenStatus /><span>See {isBench ? 'benches' : 'pieces'} like this at {SITE.street}, Landrum</span></p>
+      <p class="pdp__note">{p.wood === 'Poly lumber' ? 'Built to order by an Amish workshop from weather-resistant poly lumber. Choose your colors and options. Pricing depends on your options, so ask us for a quote.'
+        : p.wood === 'Upholstered' ? `Built to order by ${p.vendor}. Choose your fabric or leather, arm style and options. Pricing depends on your options, so ask us for a quote.`
+        : p.wood === 'Mattress' ? `Made by ${p.vendor}. Ask us about sizes, comfort levels and pricing, or try it in the showroom.`
+        : 'Built to order in solid wood by an Amish workshop. Choose your wood, stain or paint, and size. Pricing depends on your options, so ask us for a quote.'}</p>
       <dl class="specs">
         <div><dt>Builder</dt><dd>{p.vendor}</dd></div>
-        <div><dt>Wood (shown)</dt><dd>{woodLabel(p.wood)}</dd></div>
-        {opts && <div><dt>Sizes</dt><dd class="tnum">{opts}</dd></div>}
+        <div><dt>{material ? 'Material' : 'Wood (shown)'}</dt><dd>{woodLabel(p.wood)}</dd></div>
+        {opts && <div><dt>{isBench ? 'Sizes' : 'Dimensions'}</dt><dd class="tnum">{opts}</dd></div>}
         <div><dt>Rooms</dt><dd>{p.rooms.join(', ')}</dd></div>
         {specParas.map((t) => <div><dt>Details</dt><dd>{t}</dd></div>)}
         <div><dt>Lead time</dt><dd>Built to order; we confirm timing with your quote</dd></div>
       </dl>
-      {descParas.length > 0 && <div class="pdp__desc">{descParas.map((t) => <p>{t}</p>)}</div>}
+      {(descParas.length > 0 || bullets.length > 0) && <div class="pdp__desc">{descParas.map((t) => <p>{t}</p>)}{bullets.length > 0 && <ul class="pdp__features">{bullets.map((t) => <li>{t}</li>)}</ul>}</div>}
       <TrustStrip />
     </div>
   </div>
@@ -105,7 +121,7 @@ const shortTitle = p.title.replace(/^Amish\s+/i, '');
 
 <section class="section" aria-labelledby="rel-h">
   <div class="wrap">
-    <div class="section-head section-head--row" data-reveal><div><span class="eyebrow">{p.vendor}</span><h2 id="rel-h">More benches</h2></div><a class="textlink" href={withBase(`/collections/${COLLECTION.handle}`)}>All dining benches <span class="arrow" aria-hidden="true">→</span></a></div>
+    <div class="section-head section-head--row" data-reveal><div><span class="eyebrow">{p.vendor}</span><h2 id="rel-h">{isBench ? 'More benches' : `More ${home.label.toLowerCase()}`}</h2></div><a class="textlink" href={withBase(`/collections/${home.handle}`)}>{isBench ? 'All dining benches' : `All ${home.label.toLowerCase()}`} <span class="arrow" aria-hidden="true">→</span></a></div>
     <ul class="pgrid pgrid--4" role="list">{rel.map((r, i) => <li data-reveal style={`--i:${i}`}><ProductCard p={r} /></li>)}</ul>
   </div>
 </section>

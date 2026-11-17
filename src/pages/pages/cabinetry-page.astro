@@ -1,0 +1,144 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Icon from '../../components/Icon.astro';
+import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
+import { TEAM } from '../../data/team';
+import raw from '../../data/pages.json';
+
+// Copy is the live /pages/cabinetry-page (updated 2026-11-14), captured read-only on 2026-11-17.
+type Sec = { h: string; eyebrow?: string | null; paras: string[]; cards: { h: string; eyebrow?: string | null; paras: string[] }[] };
+const live = (raw as any)['cabinetry-page'] as { intro: string[]; sections: Sec[] };
+const sec = (h: string) => live.sections.find((s) => s.h === h)!;
+const visit = sec('Come see us at either showroom');
+const steps = sec('From measure to install');
+const build = sec('What we build');
+const series = sec('Three cabinetry series');
+const note = sec('A note on Amish cabinetry');
+const people = sec('The people you will meet');
+const partners = [
+  { ...sec('Brittanya Tammearu Interiors'), href: 'https://www.instagram.com/brittanyatammearuinteriors/', cta: 'View designer’s portfolio' },
+  { ...sec('Vintage Homes'), href: 'https://www.myvintagehomes.com/', cta: 'Visit Vintage Homes' },
+  { ...sec('Bridgeman Builders'), href: 'https://ig.me/m/bridgeman_builders', cta: 'Contact builder' },
+];
+const CHAS = { tel: '+18433714636', telDisplay: '843-371-4636', directions: 'https://maps.google.com/?daddr=1750+Sam+Rittenberg+Blvd,+Charleston,+SC+29407', address: '1750 Sam Rittenberg Blvd, Charleston, SC 29407' };
+const locs = [
+  { c: visit.cards[0], img: ['cab-landrum', 'MillerBilt cabinetry displays inside Foothills Amish Furniture in Landrum'], address: SITE.address, tel: SITE.tel, telDisplay: SITE.telDisplay, directions: SITE.directions, store: 'landrum' },
+  { c: visit.cards[1], img: ['cab-charleston', 'A MillerBilt kitchen display in the Charleston showroom'], address: CHAS.address, tel: CHAS.tel, telDisplay: CHAS.telDisplay, directions: CHAS.directions, store: 'charleston' },
+];
+const photoFor: Record<string, string> = { 'Judson Miller': 'judson-patricia-miller', 'Travis Campbell': 'travis-campbell', 'Michael Holladay': 'michael-holladay', 'Lauren Manzin': 'lauren-manzin' };
+const team = people.cards.map((c) => { const m = TEAM.find((t) => t.slug === photoFor[c.h]); return { name: c.h, role: c.paras[0], bio: c.paras[c.paras.length - 1], photo: m?.photo, alt: m?.alt ?? c.h }; });
+const SHOW = 7;
+const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'MillerBilt Cabinetry', url: `${SITE.origin}/pages/cabinetry-page`,
+  about: [{ '@type': 'HomeAndConstructionBusiness', name: 'MillerBilt Cabinetry', url: 'https://millerbilt.com', areaServed: ['Landrum SC', 'Charleston SC', 'Asheville NC', 'Kiawah Island SC'],
+    location: [
+      { '@type': 'Place', name: 'MillerBilt Cabinetry, Landrum', address: { '@type': 'PostalAddress', streetAddress: SITE.street, addressLocality: 'Landrum', addressRegion: 'SC', postalCode: '29356', addressCountry: 'US' }, telephone: SITE.tel },
+      { '@type': 'Place', name: 'MillerBilt Cabinetry, Charleston', address: { '@type': 'PostalAddress', streetAddress: '1750 Sam Rittenberg Blvd', addressLocality: 'Charleston', addressRegion: 'SC', postalCode: '29407', addressCountry: 'US' }, telephone: CHAS.tel } ] }] };
+const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.origin + '/' }, { '@type': 'ListItem', position: 2, name: 'Custom cabinetry', item: SITE.origin + '/pages/cabinetry-page' } ] };
+---
+<Base title="MillerBilt Cabinetry | Custom Amish Cabinets in Landrum & Charleston" description="MillerBilt custom Amish-made cabinetry from Kiawah to Asheville: kitchens, baths, built-ins and commercial millwork. Showrooms in Landrum and Charleston, SC." path="/pages/cabinetry-page" nav="Custom Cabinetry" bodyClass="page-cabinetry" lcp={{ name: 'cab-kitchen', sizes: '(min-width:1024px) 640px, 100vw', widths: [400, 800, 1200, 1600] }} jsonld={[ld, crumbs]}>
+<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li aria-current="page">Custom cabinetry</li></ol></nav></div>
+<section class="wrap hero cab-hero">
+  <div class="hero__copy">
+    <span class="eyebrow eyebrow--rule">MillerBilt Cabinetry</span>
+    <h1 class="display">Custom Amish-made cabinets, fitted to the room</h1>
+    <p class="lede">{live.intro[1]} The same MillerBilt team meets you in Landrum and in Charleston.</p>
+    <div class="btn-row hero__actions">
+      <a class="btn" href={SITE.book} data-track="book_appointment_click" data-cta-location="cabinetry_hero">Schedule a visit</a>
+      <a class="btn btn--secondary" href="https://millerbilt.com/" rel="noopener" data-track="outbound_millerbilt" data-cta-location="cabinetry_hero">Visit millerbilt.com</a>
+    </div>
+  </div>
+  <div class="hero__media"><Img name="cab-kitchen" alt="A MillerBilt kitchen with a painted island, open shelving and brass pendant lights" sizes="(min-width:1024px) 640px, 100vw" widths={[400, 800, 1200, 1600]} eager /></div>
+</section>
+
+<section class="section band" aria-labelledby="loc-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">{visit.eyebrow}</span><h2 id="loc-h">{visit.h}</h2><p class="lede">{visit.paras[0].replace(' Choose a showroom on millerbilt.com.', '')}</p></div>
+    <div class="locs">
+      {locs.map((l, i) => (
+        <article class="loc" data-reveal style={`--i:${i}`} id={`visit-${l.store}`}>
+          <div class="loc__media"><Img name={l.img[0]} alt={l.img[1]} sizes="(min-width:1024px) 300px, 100vw" widths={[400, 800]} /></div>
+          <div class="loc__body"><span class="eyebrow" style="margin:0">{l.c.eyebrow}</span><h3>{l.c.h}</h3>
+            <p class="muted">{l.c.paras[0]}<br />{l.address}</p>
+            <p class="small muted">{l.c.paras[1].replace(' Meetings by appointment', '. Meetings by appointment.')}</p>
+            <div class="btn-row"><a class="btn btn--caps btn--sm" href={`tel:${l.tel}`} data-track="click_to_call" data-store={l.store} data-cta-location="cabinetry_loc">Call {l.telDisplay}</a><a class="btn btn--caps btn--sm btn--secondary" href={l.directions} target="_blank" rel="noopener" data-track="directions_click" data-store={l.store} data-cta-location="cabinetry_loc">Directions</a></div></div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="steps-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">One team</span><h2 id="steps-h">{steps.h}</h2></div>
+    <ol class="trio" role="list">{steps.cards.map((c, i) => <li data-reveal style={`--i:${i}`}><span class="num">{c.eyebrow}</span><h3>{c.h}</h3><p>{c.paras[0]}</p></li>)}</ol>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0"><div class="wrap gallery-strip" data-reveal>
+  <figure><Img name="cab-g09" alt="A MillerBilt kitchen with a dark island and white perimeter cabinets" sizes="(min-width:1024px) 620px, 100vw" widths={[400, 800, 1200]} /></figure>
+  <figure><Img name="cab-sage" alt="Sage green MillerBilt cabinetry with brass hardware" sizes="(min-width:1024px) 620px, 100vw" widths={[400, 800, 1200]} /></figure>
+</div></section>
+
+<section class="section band" aria-labelledby="build-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">Kitchens to commercial</span><h2 id="build-h">{build.h}</h2></div>
+    <ul class="trio" role="list">{build.cards.map((c, i) => <li data-reveal style={`--i:${i}`}><h3>{c.h}</h3><p>{c.paras[0]}</p></li>)}</ul>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="ser-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">{series.eyebrow}</span><h2 id="ser-h">{series.h}</h2><p class="lede">{series.paras[0]}</p></div>
+    <ul class="series" role="list">
+      {series.cards.map((c, i) => {
+        const items = c.paras.slice(1).filter((t) => !/^The \$[\d,]+ .*allowance is optional/.test(t));
+        return (
+          <li data-reveal style={`--i:${i}`}><span class="eyebrow" style="margin-bottom:0">{c.eyebrow}</span><h3>{c.h}</h3><p class="sub">{c.paras[0]}</p>
+            <ul>{items.slice(0, SHOW).map((t) => <li>{t}</li>)}</ul>
+            {items.length > SHOW && <details class="series__more"><summary>All {items.length} features</summary><ul>{items.slice(SHOW).map((t) => <li>{t}</li>)}</ul></details>}
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
+
+<section class="section band" aria-labelledby="note-h">
+  <div class="wrap csec__grid">
+    <div class="csec__head" data-reveal><span class="eyebrow">Good to know</span><h2 id="note-h">{note.h}</h2></div>
+    <div class="csec__body prose" data-reveal>{note.paras.map((t) => <p>{t}</p>)}</div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="people-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">MillerBilt team</span><h2 id="people-h">{people.h}</h2></div>
+    <ul class="team-grid team-grid--4" role="list">
+      {team.map((m, i) => (
+        <li class="team-card" data-reveal style={`--i:${i}`}>
+          {m.photo && <div class="team-card__media"><Img name={m.photo} alt={m.alt} sizes="(min-width:1024px) 300px, (min-width:768px) 45vw, 100vw" widths={[400, 800]} /></div>}
+          <h3 class="team-card__name">{m.name}</h3><p class="team-card__title">{m.role}</p><p class="team-card__bio">{m.bio}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section class="section band" aria-labelledby="partners-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">Partners</span><h2 id="partners-h">Designers and builders we recommend</h2></div>
+    <ul class="partners" role="list">
+      {partners.map((p, i) => <li data-reveal style={`--i:${i}`}><span class="eyebrow">{p.eyebrow}</span><h3 class="h4">{p.h}</h3><p>{p.paras[0]}</p><a class="textlink" href={p.href} target="_blank" rel="noopener">{p.cta} <span class="arrow" aria-hidden="true">→</span></a></li>)}
+    </ul>
+  </div>
+</section>
+
+<section class="section"><div class="wrap cta-band" data-reveal>
+  <span class="eyebrow">Start a MillerBilt project</span><h2 class="h2">Bring your plans. We’ll bring the samples.</h2>
+  <p class="lede">Meetings are by appointment. If you would rather talk first, call either location. Sunday is closed at both showrooms.</p>
+  <div class="btn-row"><a class="btn" href={SITE.book} data-track="book_appointment_click" data-cta-location="cabinetry_cta">Schedule a visit</a><a class="btn btn--secondary" href={`tel:${SITE.tel}`} data-track="click_to_call" data-store="landrum" data-cta-location="cabinetry_cta">Landrum {SITE.telDisplay}</a><a class="btn btn--secondary" href={`tel:${CHAS.tel}`} data-track="click_to_call" data-store="charleston" data-cta-location="cabinetry_cta">Charleston {CHAS.telDisplay}</a></div>
+</div></section>
+</Base>

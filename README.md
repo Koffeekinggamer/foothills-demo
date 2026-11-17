@@ -20,6 +20,13 @@ Requires Node `>=22.23.4`. Internal links go through `import.meta.env.BASE_URL` 
 | `/pages/contact-us` | `src/pages/pages/contact-us.astro` (hours, today's status, map facade, DIRECTIONS, form `#contact-us-page`) |
 | `/pages/book` | `src/pages/pages/book.astro` (two-step flow: Cabinetry or Furniture, then a person; each person has a click-to-load calendar facade) |
 | `/pages/our-team` | `src/pages/pages/our-team.astro` (live roster from foothillsamishfurniture.com/pages/our-team) |
+| `/collections` | `src/pages/collections/index.astro` (rooms index) |
+| `/collections/<handle>` (47: 5 rooms + 42 sub-collections, the live mega-menu paths) | `src/pages/collections/[handle].astro` (generic template: category chips, Category/Builder/Wood/Room facets, instant search; a small real sample per collection) |
+| `/products/<handle>` (355 sample products) | `src/pages/products/[handle].astro` (Product JSON-LD from `src/data/ld.ts`) |
+| `/pages/cabinetry-page` | `src/pages/pages/cabinetry-page.astro` (Landrum + Charleston, series, team) |
+| `/pages/21st-anniversary-sale` | `src/pages/pages/21st-anniversary-sale.astro` (SaleEvent JSON-LD) |
+| `/pages/<handle>` (story, why, services, craftsmanship, reviews, careers, customize, species, finishes, hardware, upholstery, poly colors, live edge, FAQ, shipping, financing, care, policies, privacy, terms, six Landrum pages, Greenville/Spartanburg/Asheville) | `src/pages/pages/[handle].astro` driven by `src/data/pagecfg.ts`, `src/data/pages.json` and `src/data/local.ts` |
+| `/sitemap`, `/sitemap.xml` | `src/pages/sitemap.astro`, `src/pages/sitemap.xml.ts` (from `src/data/routes.ts`) |
 
 ## Booking rules
 Appointments are one hour, booked at least 24 hours ahead, with a one-hour buffer between appointments. Showroom hours are Monday–Saturday, 10 a.m. to 5 p.m. Eastern. The demo calendar placeholder (`public/booking-embed-placeholder.html`) enforces the same rules and uses no real Google calendars.
@@ -45,6 +52,9 @@ Selected shots from `/workspace/foothills-demo-photos/` (March 2026 web-size fra
 Slots sit where they live today: `lptm.js` and Omnisend in `<head>`, the GTM noscript at the start of `<body>`, and the load-deferred GTM, Meta Pixel and NEXSTAR at the end of `<body>`. They are HTML comments with placeholder IDs. Podium is a click facade that only shows a toast in the demo. Constant Contact, the on.aws beacon, Sentry, GemPages and Elfsight are gone.
 
 ## Tools
+- `tools/build_catalog.py`: read-only fetch of public collection `products.json` → `src/data/catalog.json` + `src/assets/products/*.jpg` (8 per sub-collection, 24 per room)
+- `tools/build_pages.py`: captured live page HTML → `src/data/pages.json`
+- `tools/linkcheck.py`: internal links, noindex on every page, no live external scripts
 - `tools/shoot.cjs`: screenshots at 390 and 1440 → `screens/`
 - `tools/interact.cjs`: smoke test (filters, search, form, facades, zero external requests)
-- `tools/lh.sh`: Lighthouse mobile → `lighthouse/`
+- `tools/lh.sh`: Lighthouse mobile → `lighthouse/` (`PAGES="name=/path …" ORIGIN=… tools/lh.sh tag`)

@@ -1,0 +1,54 @@
+---
+/** Renders one content section from pages.json: optional eyebrow + h2, paragraphs ("• " lines become a list,
+ *  a paragraph ending in ":" can be followed by a configured list), h3 cards and FAQ items. */
+interface Card { h: string; eyebrow?: string | null; paras: string[] }
+interface Sec { h: string; eyebrow?: string | null; paras: string[]; cards: Card[]; faq: { q: string; a: string[] }[] }
+const { s, list, cardsAs = 'grid', headingLevel = 2 } = Astro.props as { s: Sec; list?: string[]; cardsAs?: string; headingLevel?: number };
+type Block = { t: 'p'; v: string } | { t: 'ul'; v: string[] };
+function blocks(paras: string[], extra?: string[]): Block[] {
+  const out: Block[] = [];
+  paras.forEach((p) => {
+    if (/^•/.test(p)) {
+      const items = p.split(/\s*•\s*/).map((x) => x.trim()).filter(Boolean);
+      const last = out[out.length - 1];
+      if (last && last.t === 'ul') last.v.push(...items); else out.push({ t: 'ul', v: items });
+    } else {
+      // "• a • b Plus, ..." mixed paragraphs
+      const m = p.match(/^(.*?)\s*•\s*(.+)$/);
+      if (m && m[1] && !m[1].endsWith('•')) { out.push({ t: 'p', v: m[1] }); out.push({ t: 'ul', v: m[2].split(/\s*•\s*/).filter(Boolean) }); }
+      else out.push({ t: 'p', v: p });
+    }
+    if (extra && /:$/.test(p)) out.push({ t: 'ul', v: extra });
+  });
+  return out;
+}
+const body = blocks(s.paras, list);
+const H = headingLevel === 2 ? 'h2' : 'h3';
+const CH = headingLevel === 2 ? 'h3' : 'h4';
+---
+{body.map((b) => b.t === 'p' ? <p>{b.v}</p> : <ul class={list && b.v === list ? 'options' : undefined}>{b.v.map((x) => <li>{x}</li>)}</ul>)}
+{s.cards.length > 0 && cardsAs === 'prose' && s.cards.map((c) => (
+  <Fragment><CH>{c.h}</CH>{blocks(c.paras).map((b) => b.t === 'p' ? <p>{b.v}</p> : <ul>{b.v.map((x) => <li>{x}</li>)}</ul>)}</Fragment>
+))}
+{s.cards.length > 0 && cardsAs !== 'prose' && (
+  <ul class={`cards cards--${cardsAs}`} role="list">
+    {s.cards.map((c, i) => (
+      <li data-reveal style={`--i:${i % 4}`}>
+        {cardsAs === 'steps' && <span class="num tnum">{String(i + 1).padStart(2, '0')}</span>}
+        {c.eyebrow && <span class="eyebrow">{c.eyebrow}</span>}
+        <CH class="cards__h">{c.h}</CH>
+        {blocks(c.paras).map((b) => b.t === 'p' ? <p>{b.v}</p> : <ul>{b.v.map((x) => <li>{x}</li>)}</ul>)}
+      </li>
+    ))}
+  </ul>
+)}
+{s.faq.length > 0 && (
+  <div class="faq-list">
+    {s.faq.map((f) => (
+      <details class="faq-item">
+        <summary><span>{f.q}</span></summary>
+        <div class="faq-item__a">{f.a.map((x) => <p>{x}</p>)}</div>
+      </details>
+    ))}
+  </div>
+)}

@@ -6,14 +6,14 @@
   var boxes = Array.prototype.slice.call(root.querySelectorAll(".rail input[type=checkbox]"));
   var chips = root.querySelector("[data-chips]"), empty = root.querySelector("[data-empty]");
   var rail = document.getElementById("filters"), fbtn = root.querySelector(".filter-btn");
-  var KEYS = ["builder", "wood", "room"];
+  var KEYS = (root.getAttribute("data-keys") || "builder,wood,room").split(",").filter(Boolean);
 
   function selected() {
     var s = {}; KEYS.forEach(function (k) { s[k] = []; });
     boxes.forEach(function (b) { if (b.checked) s[b.name].push(b.value); });
     return s;
   }
-  function vals(card, k) { var v = card.getAttribute("data-" + k) || ""; return k === "room" ? v.split("|") : [v]; }
+  function vals(card, k) { return (card.getAttribute("data-" + k) || "").split("|"); }
   function match(card, s, terms, skip) {
     for (var i = 0; i < KEYS.length; i++) {
       var k = KEYS[i]; if (k === skip || !s[k].length) continue;

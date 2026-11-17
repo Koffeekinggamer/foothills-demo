@@ -1,0 +1,25 @@
+---
+import Img from './Img.astro';
+import { withBase } from '../data/url';
+const { eyebrow = 'Shop by room', h = 'Start browsing before you visit', band = true } = Astro.props as { eyebrow?: string; h?: string; band?: boolean };
+// "View furniture" link text is a live GTM/Meta trigger (regex .*(view furniture).*); keep it.
+const tiles = [
+  ['Dining', '/collections/amish-dining-room-furniture', 'tile-dining', 'A live-edge dining table with a bench and chairs in the showroom'],
+  ['Bedroom', '/collections/amish-bedroom-furniture', 'tile-bedroom', 'A bedroom set in the Landrum showroom'],
+  ['Living', '/collections/living-room-furniture', 'tile-living', 'A sofa, armchair and ottoman styled in the Landrum showroom'],
+  ['Office', '/collections/amish-office-furniture', 'tile-office', 'A live-edge desk and chair in the showroom'],
+  ['Outdoor', '/collections/amish-outdoor-furniture', 'tile-outdoor', 'A porch swing on a wooden deck'],
+];
+const id = 'rt-' + Math.random().toString(36).slice(2, 7);
+---
+<section class={`section${band ? ' band' : ''} cv`} aria-labelledby={id}>
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">{eyebrow}</span><h2 id={id}>{h}</h2></div>
+    <ul class="tiles tiles--5" role="list">
+      {tiles.map(([t, href, im, alt], i) => (
+        <li data-reveal style={`--i:${i}`}><a class="tile" href={withBase(href)}><div class="tile__media"><Img name={im} alt={alt} sizes="(min-width:1280px) 240px, (min-width:768px) 20vw, 46vw" widths={[400, 800]} /></div>
+          <h3 class="tile__title">{t}</h3><span class="tile__cta">View furniture <span aria-hidden="true">→</span></span></a></li>
+      ))}
+    </ul>
+  </div>
+</section>
