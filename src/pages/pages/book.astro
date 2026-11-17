@@ -11,7 +11,7 @@ import TrustStrip from '../../components/TrustStrip.astro';
 import Visit from '../../components/Visit.astro';
 import { SITE, BOOKING } from '../../data/site';
 import { withBase } from '../../data/url';
-import { BOOKING_CATEGORIES } from '../../data/team';
+import { BOOKING_CATEGORIES, bookingTitle } from '../../data/team';
 
 // LIVE BOOKING CALENDARS (inert in the demo: no real Google Calendar URLs).
 // Replace each person's CALENDAR_URLS[slug] with that person's Google Calendar
@@ -70,7 +70,12 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
         <div class="book-flow__step" data-step={`people-${c.id}`}>
           {c.intro ? (
             <div class="book-intro">
-              <div class="book-intro__media"><Img name={c.intro} alt={c.introAlt} sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200, 1600, 2400]} /></div>
+              <div class="book-intro__media">
+                <Img name={c.intro} alt={c.introAlt} sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200, 1600, 2400]} />
+                {c.accent && (
+                  <span class="media-accent"><Img name={c.accent} alt={c.accentAlt} sizes="(min-width:1024px) 160px, 128px" widths={[400, 800, 1200]} /></span>
+                )}
+              </div>
               <div class="book-intro__copy">
                 <p class="book-flow__kicker"><span class="tnum">2</span> of 2</p>
                 <h2 class="h3">Who would you like to meet?</h2>
@@ -90,7 +95,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
                 <button class="person-card" type="button" data-pick-person={p.slug} data-track="book_appointment_click" data-cta-location={`booking_${c.id}`}>
                   <span class="person-card__media"><Img name={p.photo} alt="" sizes="200px" widths={[400, 800]} /></span>
                   <span class="person-card__name">{p.name}</span>
-                  <span class="person-card__title">{p.title}</span>
+                  <span class="person-card__title">{bookingTitle(p)}</span>
+                  {p.location && <span class="person-card__location">{p.location}</span>}
                 </button>
               </li>
             ))}
@@ -106,7 +112,8 @@ const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a
             <div class="book-cal__photo"><Img name={p.photo} alt={p.alt} sizes="96px" widths={[200, 400]} /></div>
             <div>
               <h2 class="h3">Book with {p.name}</h2>
-              <p class="muted">{p.title}</p>
+              <p class="muted">{bookingTitle(p)}</p>
+              {p.location && <p class="book-cal__location">{p.location}</p>}
             </div>
           </div>
           <p class="book-cal__rules">One-hour appointments, booked at least 24 hours ahead, with a one-hour buffer between visits. {BOOKING.hoursLabel}.</p>

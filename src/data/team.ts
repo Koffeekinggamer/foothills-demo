@@ -11,6 +11,8 @@ export type TeamMember = {
   alt: string;
   /** People a visitor can book on /pages/book. */
   booking?: 'cabinetry' | 'furniture';
+  /** Showroom location from the official title, when one is named. */
+  location?: string;
 };
 
 export const TEAM: TeamMember[] = [
@@ -38,6 +40,7 @@ export const TEAM: TeamMember[] = [
     photo: 'michael-holladay',
     alt: 'Michael Holladay, Sales Manager and Director of Cabinetry in Landrum',
     booking: 'cabinetry',
+    location: 'Landrum',
   },
   {
     slug: 'savannah-russel',
@@ -74,6 +77,7 @@ export const TEAM: TeamMember[] = [
     photo: 'lauren-manzin',
     alt: 'Lauren Manzin, Director of Cabinetry in Charleston',
     booking: 'cabinetry',
+    location: 'Charleston',
   },
   {
     slug: 'joy-davenport',
@@ -135,16 +139,24 @@ export const TEAM: TeamMember[] = [
 
 export const TEAM_BY_SLUG = Object.fromEntries(TEAM.map((m) => [m.slug, m]));
 
+/** Official title with a trailing “– Location” removed when a separate location line is shown. */
+export function bookingTitle(m: TeamMember): string {
+  if (m.location && m.title.endsWith('– ' + m.location)) return m.title.slice(0, m.title.lastIndexOf('–')).trim();
+  return m.title;
+}
+
 /** Cabinetry first (Lauren, then Michael), then Landrum furniture sales (Lexi, Savannah, Kyra), as directed. */
 export const BOOKING_CATEGORIES = [
   {
     id: 'cabinetry' as const,
     label: 'Cabinetry',
-    blurb: 'Custom cabinets for the kitchen, bath or built-ins, in Landrum or Charleston.',
+    blurb: 'Custom cabinets for the kitchen, bath or built‑ins, in Landrum or Charleston.',
     image: 'cab-fridge',
     imageAlt: 'A stainless refrigerator set into custom cabinets, with a hardwood island in the foreground',
     intro: 'cab-dishwasher',
     introAlt: 'A hardwood-paneled dishwasher door opening on a kitchen island',
+    accent: 'cab-sage',
+    accentAlt: 'A close view of painted kitchen cabinets with brass hardware and glass-front doors',
     people: TEAM.filter((m) => m.booking === 'cabinetry').sort((a, b) => (a.slug === 'lauren-manzin' ? -1 : b.slug === 'lauren-manzin' ? 1 : 0)),
   },
   {
@@ -155,6 +167,8 @@ export const BOOKING_CATEGORIES = [
     imageAlt: 'Living room furniture in the Landrum showroom, with sofas, chairs and tables under high windows',
     intro: undefined as string | undefined,
     introAlt: undefined as string | undefined,
+    accent: undefined as string | undefined,
+    accentAlt: undefined as string | undefined,
     people: TEAM.filter((m) => m.booking === 'furniture').sort((a, b) => {
       const order = ['lexi-wertheim', 'savannah-russel', 'kyra-yoder'];
       return order.indexOf(a.slug) - order.indexOf(b.slug);
