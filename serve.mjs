@@ -2,8 +2,11 @@
 import http from 'node:http'; import http2 from 'node:http2'; import fs from 'node:fs'; import path from 'node:path'; import zlib from 'node:zlib';
 const root = path.resolve('dist'); const port = +(process.env.PORT || 4321);
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.avif': 'image/avif', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json' };
+const cache = new Map();
 const handler = (req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  // GitHub Pages serves this folder at /foothills-demo/; strip that prefix locally.
+  if (p === '/foothills-demo' || p.startsWith('/foothills-demo/')) p = p.slice('/foothills-demo'.length) || '/';
   let f = path.join(root, p);
   if (!f.startsWith(root)) { res.writeHead(403); res.end(); return; }
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
@@ -13,8 +16,16 @@ const handler = (req, res) => {
   const h = { 'content-type': types[ext] || 'application/octet-stream', 'cache-control': p.startsWith('/_assets/') || p.startsWith('/fonts/') ? 'public, max-age=31536000, immutable' : 'public, max-age=0, must-revalidate', 'x-robots-tag': 'noindex, nofollow' };
   const ae = req.headers['accept-encoding'] || '';
   if (/\.(html|js|css|svg|json)$/.test(ext)) {
-    if (ae.includes('br')) { h['content-encoding'] = 'br'; res.writeHead(200, h); res.end(zlib.brotliCompressSync(body)); return; }
-    if (ae.includes('gzip')) { h['content-encoding'] = 'gzip'; res.writeHead(200, h); res.end(zlib.gzipSync(body)); return; }
+    if (ae.includes('br')) {
+      const key = f + ':br';
+      if (!cache.has(key)) cache.set(key, zlib.brotliCompressSync(body));
+      h['content-encoding'] = 'br'; res.writeHead(200, h); res.end(cache.get(key)); return;
+    }
+    if (ae.includes('gzip')) {
+      const key = f + ':gz';
+      if (!cache.has(key)) cache.set(key, zlib.gzipSync(body));
+      h['content-encoding'] = 'gzip'; res.writeHead(200, h); res.end(cache.get(key)); return;
+    }
   }
   res.writeHead(200, h); res.end(body);
 };

@@ -94,7 +94,11 @@
     clearTimeout(toastT); toastT = setTimeout(function () { toastEl.hidden = true; }, 4000);
   }
 
-  /* 4. Podium facade: the widget loads only on the first Text tap, and never auto-opens. */
+  /* 4. Podium: NEVER auto-open, especially on phones. Below 1024px the bottom action
+     bar's Text button is the only Text entry (the floating .podium-facade is hidden).
+     The widget script is not in the page on load; it is injected only after a user tap,
+     and in the demo it is not injected at all. When wiring the live token, do not pass
+     an auto-open / proactive campaign flag. */
   function openPodium(src) {
     window.dataLayer.push({ event: "podium_open", cta_location: src || "" });
     if (DEMO) { toast("Demo: Podium text chat would open here. Nothing was loaded."); return; }
@@ -121,11 +125,52 @@
     });
   });
 
-  document.querySelectorAll("[data-cal-open]").forEach(function (a) {
-    a.addEventListener("click", function () { var b = document.querySelector("#cal button"); if (b) b.click(); });
-  });
+  /* 5b. Booking flow on /pages/book: step 1 category, step 2 person, then that person's calendar. */
+  var flow = document.querySelector("[data-book-flow]");
+  if (flow) {
+    var current = "category";
+    function personCategory(slug) {
+      var btn = flow.querySelector("[data-pick-person='" + slug + "']");
+      if (!btn) return "furniture";
+      var panel = btn.closest("[data-step]");
+      var step = panel && panel.getAttribute("data-step") || "";
+      return step.indexOf("people-") === 0 ? step.slice(7) : "furniture";
+    }
+    function show(name) {
+      current = name;
+      flow.querySelectorAll("[data-step]").forEach(function (el) {
+        el.classList.toggle("is-active", el.getAttribute("data-step") === name);
+      });
+      var active = flow.querySelector("[data-step].is-active");
+      if (active && current !== "category") {
+        var h = active.querySelector("h2, h3");
+        if (h) h.setAttribute("tabindex", "-1"), h.focus({ preventScroll: true });
+        active.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      }
+    }
+    flow.setAttribute("data-ready", "");
+    var hash = (location.hash || "").replace(/^#/, "");
+    if (hash && flow.querySelector('[data-step="cal-' + hash + '"]')) show("cal-" + hash);
+    else if (hash && flow.querySelector('[data-step="people-' + hash + '"]')) show("people-" + hash);
+    else show("category");
+    flow.querySelectorAll("[data-choose]").forEach(function (b) {
+      b.addEventListener("click", function () { show("people-" + b.getAttribute("data-choose")); });
+    });
+    flow.querySelectorAll("[data-pick-person]").forEach(function (b) {
+      b.addEventListener("click", function () { show("cal-" + b.getAttribute("data-pick-person")); });
+    });
+    flow.querySelectorAll("[data-book-back]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (current.indexOf("cal-") === 0) show("people-" + personCategory(current.slice(4)));
+        else show("category");
+      });
+    });
+  }
 
-  /* 6. Forms: validate, and in the demo never send anything. */
+  /* 6. Forms: validate, and in the demo never send anything.
+     LIVE LEAD ROUTING: contact-page and product-inquiry submissions are emailed to
+     travis@foothillsamish.com and a text is sent to the store phone, (864) 457-2400.
+     Email signup stays on Omnisend. Nothing is sent from this demo. */
   document.querySelectorAll("form[data-form]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -140,7 +185,10 @@
       if (bad) { bad.focus(); return; }
       window.dataLayer.push({ event: "generate_lead", form_id: form.id, form_name: form.getAttribute("data-form") });
       var st = form.querySelector(".form__status");
-      var msg = "Demo only: nothing was sent. On the live site this " + (form.getAttribute("data-demo-form") || "form") + " goes to the Landrum team, who reply within one business day.";
+      var kind = form.getAttribute("data-form");
+      var msg = kind === "email_signup"
+        ? "Demo only: nothing was sent. On the live site this Omnisend signup is the only email list."
+        : "Demo only: nothing was sent. On the live site this " + (form.getAttribute("data-demo-form") || "form") + " is emailed to travis@foothillsamish.com and a text is sent to (864) 457-2400.";
       if (st) { st.hidden = false; st.textContent = msg; st.focus && st.focus(); } else toast(msg);
     });
   });

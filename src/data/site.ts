@@ -14,6 +14,23 @@ export const SITE = {
   book: withBase('/pages/book'),
   geo: { lat: 35.1751, lng: -82.1890 },
 };
+
+// Booking rules (Judson, Nov 2026). Confirmations go to the specialist who was booked;
+// no other recipient has been named.
+export const BOOKING = {
+  durationMinutes: 60,
+  noticeHours: 24,
+  bufferMinutes: 60,
+  hoursLabel: 'Monday–Saturday, 10 a.m. to 5 p.m. Eastern',
+};
+
+// LIVE LEAD ROUTING (inert in the demo: forms never submit).
+// On the live site, contact and product-inquiry leads are emailed to
+// travis@foothillsamish.com and a text is sent to the store phone, (864) 457-2400.
+export const LEAD = {
+  email: 'travis@foothillsamish.com',
+  smsDisplay: '(864) 457-2400',
+};
 // 0 = Sunday. [open, close] in minutes after midnight, America/New_York.
 export const HOURS: Record<number, [number, number] | null> = {
   0: null, 1: [600, 1020], 2: [600, 1020], 3: [600, 1020], 4: [600, 1020], 5: [600, 1020], 6: [600, 1020],

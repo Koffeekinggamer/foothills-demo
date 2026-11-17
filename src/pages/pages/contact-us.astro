@@ -12,7 +12,7 @@ import Craft from '../../components/Craft.astro';
 import { SITE } from '../../data/site';
 const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Contact Foothills Amish Furniture', url: `${SITE.origin}/pages/contact-us`, about: { '@id': `${SITE.origin}/#store` } };
 ---
-<Base title="Contact & Visit | Foothills Amish Furniture" description="Hours, directions and phone for the Foothills Amish Furniture showroom at 106 E. Rutherford St, Landrum, SC. Open Monday to Saturday, 10 a.m. to 5 p.m." path="/pages/contact-us" nav="Visit" bodyClass="page-contact" lcp={{ name: 'storefront', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[contactLd]}>
+<Base title="Contact & Visit | Foothills Amish Furniture" description="Hours, directions and phone for the Foothills Amish Furniture showroom at 106 E. Rutherford St, Landrum, SC. Open Monday to Saturday, 10 a.m. to 5 p.m." path="/pages/contact-us" nav="Visit" bodyClass="page-contact" lcp={{ name: 'store-exterior', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[contactLd]}>
 <section class="wrap visit-hero" aria-labelledby="visit-h">
   <div class="visit-hero__copy">
     <span class="eyebrow eyebrow--rule">Contact &amp; visit</span>
@@ -25,7 +25,7 @@ const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', na
     </div>
     <div class="visit-hero__hours"><h2 class="eyebrow">Hours (Eastern)</h2><Hours /></div>
   </div>
-  <div class="visit-hero__media"><Img name="storefront" alt="The Foothills Amish Furniture building on E. Rutherford Street in downtown Landrum" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
+  <div class="visit-hero__media"><Img name="store-exterior" alt="The Foothills Amish Furniture hanging sign and awning on the brick storefront in downtown Landrum" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
 </section>
 
 <section class="section--sm" style="padding-top:0"><div class="wrap"><TrustStrip /></div></section>
@@ -33,7 +33,7 @@ const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', na
 <section class="section band" aria-labelledby="map-h">
   <div class="wrap split" style="align-items:start">
     <div class="map-facade map-facade--tall" data-facade data-title="Map to Foothills Amish Furniture" data-src={SITE.mapEmbed} data-reveal>
-      <Img name="showroom-interior" alt="Inside the Landrum showroom: dining and living furniture on display" sizes="(min-width:1024px) 600px, 100vw" />
+      <Img name="showroom-wide" alt="An overhead view of living room furniture on the Landrum showroom floor" sizes="(min-width:1024px) 600px, 100vw" />
       <button class="btn btn--light btn--sm map-facade__btn" type="button" data-track="map_load" data-cta-location="contact_map"><Icon name="pin" />Show map</button>
     </div>
     <div data-reveal>
@@ -56,6 +56,9 @@ const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', na
   <div class="wrap split split--7-5" style="align-items:start">
     <div class="form-card">
       <h2 id="msg-h" class="h3" style="margin-bottom:var(--sp-5)">Send us a message</h2>
+      <!-- LIVE LEAD ROUTING: this form does not submit in the demo.
+           On the live site, submissions are emailed to travis@foothillsamish.com
+           and a text is sent to the store phone, (864) 457-2400. -->
       <form class="form" id="contact-us-page" action="#" method="post" data-form="contact_page" data-demo-form="message" novalidate>
         <input type="hidden" name="form_id" value="contact-us-page" />
         <div class="form__row form__row--2">
@@ -73,7 +76,7 @@ const contactLd = { '@context': 'https://schema.org', '@type': 'ContactPage', na
       <dl class="visit__facts">
         <div><dt>Phone</dt><dd><a class="tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="contact">{SITE.telDisplay}</a><br /><span class="muted small">A real person answers, not a phone tree.</span></dd></div>
         <div><dt>Text</dt><dd><a class="link" href={SITE.sms} data-podium data-track="text_us_click" data-cta-location="contact">Text a furniture specialist</a></dd></div>
-        <div><dt>Appointment</dt><dd><a class="link" href={SITE.book} data-track="book_appointment_click" data-cta-location="contact">Reserve time with a specialist</a></dd></div>
+        <div><dt>Appointment</dt><dd><a class="link" href={SITE.book} data-track="book_appointment_click" data-cta-location="contact">Reserve a one-hour visit</a><br /><span class="muted small">Book at least 24 hours ahead. We leave an hour between appointments.</span></dd></div>
       </dl>
     </div>
   </div>

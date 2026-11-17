@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
+import { TEAM } from '../../data/team';
+const ld = { '@context': 'https://schema.org', '@type': 'AboutPage', name: 'Our Team', url: `${SITE.origin}/pages/our-team`, about: { '@id': `${SITE.origin}/#store` } };
+---
+<Base title="Our Team | Foothills Amish Furniture" description="Meet the Foothills Amish Furniture and MillerBilt Cabinetry team in Landrum and Charleston: owners, specialists, office and delivery." path="/pages/our-team" bodyClass="page-team" jsonld={[ld]}>
+<section class="wrap book-hero team-hero" aria-labelledby="team-page-h">
+  <div>
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li aria-current="page">Our team</li></ol></nav>
+    <span class="eyebrow eyebrow--rule">Our team</span>
+    <h1 id="team-page-h">Real people, not a phone tree</h1>
+    <p class="lede">When you call, you’ll get a live, friendly specialist, not voicemail.</p>
+  </div>
+</section>
+
+<section class="section--sm" style="padding-top:0">
+  <div class="wrap">
+    <ul class="team-grid team-grid--page" role="list">
+      {TEAM.map((m, i) => (
+        <li class="team-card" id={m.slug} data-reveal style={`--i:${i % 4}`}>
+          <div class="team-card__media"><Img name={m.photo} alt={m.alt} sizes="(min-width:1024px) 300px, (min-width:768px) 45vw, 100vw" widths={[400, 800]} /></div>
+          <h2 class="team-card__name">{m.name}</h2>
+          <p class="team-card__title">{m.title}</p>
+          {m.bio && <p class="team-card__bio">{m.bio}</p>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+</Base>

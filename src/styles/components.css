@@ -5,7 +5,7 @@
 
 /* ---- 1. Base ------------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + var(--sp-4)); }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--announce-h) + var(--header-h) + var(--sp-4)); }
 body {
   margin: 0; background: var(--bg); color: var(--text);
   font-family: var(--font-sans); font-size: var(--fs-body); line-height: var(--lh-body);
