@@ -1,5 +1,6 @@
 ---
 import Img from './Img.astro';
+import { withBase } from '../data/url';
 ---
 <section class="section band cv" aria-labelledby="team-h">
   <div class="wrap split split--7-5">
@@ -11,7 +12,7 @@ import Img from './Img.astro';
         <li><strong>Judson &amp; Pat Miller</strong><span>Owners. Judson grew up Beachy Amish with a background in woodworking and construction; Pat comes from a Mennonite family.</span></li>
         <li><strong>Trip</strong><span>Furniture specialist, and the name our customers mention most in their reviews.</span></li>
       </ul>
-      <a class="textlink" href="/pages/our-team">Meet the whole team <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="textlink" href={withBase('/pages/our-team')}>Meet the whole team <span class="arrow" aria-hidden="true">→</span></a>
     </div>
     <div class="split__media" data-reveal><Img name="showroom-014" alt="Sofa and chairs arranged in the Foothills showroom" sizes="(min-width:1024px) 480px, 100vw" /></div>
   </div>

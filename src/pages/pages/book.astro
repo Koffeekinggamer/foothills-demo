@@ -10,9 +10,10 @@ import Builders from '../../components/Builders.astro';
 import TrustStrip from '../../components/TrustStrip.astro';
 import Visit from '../../components/Visit.astro';
 import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
 // Live booking embed (inert in demo): replace with the real Google Calendar appointment schedule URL.
 const CAL_SRC_LIVE = 'https://calendar.google.com/calendar/appointments/schedules/SCHEDULE_ID?gv=true';
-const CAL_SRC_DEMO = '/booking-embed-placeholder.html';
+const CAL_SRC_DEMO = withBase('/booking-embed-placeholder.html');
 const ld = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Book a showroom appointment', url: `${SITE.origin}/pages/book`,
   potentialAction: { '@type': 'ReserveAction', target: `${SITE.origin}/pages/book`, result: { '@type': 'Reservation', name: 'Furniture design consultation' } }, about: { '@id': `${SITE.origin}/#store` } };
 ---

@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import { withBase } from '../data/url';
 ---
 <section class="section cv" aria-labelledby="promise-h">
   <div class="wrap">
@@ -9,6 +10,6 @@ import Icon from './Icon.astro';
       <li data-reveal style="--i:1"><Icon name="pin" /><h3>We ship anywhere</h3><p>In-home delivery is usually about 10 days after your piece reaches our warehouse. Farther away? We ship Amish-made furniture across the country and around the world.</p></li>
       <li data-reveal style="--i:2"><Icon name="shield" /><h3>10 years of service</h3><p>We service your furniture at no charge within ten years of delivery, whether it’s construction, finish, fabric or a part. And we honor every manufacturer warranty.</p></li>
     </ul>
-    <p class="small muted" style="margin-top:var(--sp-6)"><a class="link" href="/pages/shipping-delivery">Shipping &amp; delivery details</a> · <a class="link" href="/pages/our-policies">Warranty &amp; store policies</a></p>
+    <p class="small muted" style="margin-top:var(--sp-6)"><a class="link" href={withBase('/pages/shipping-delivery')}>Shipping &amp; delivery details</a> · <a class="link" href={withBase('/pages/our-policies')}>Warranty &amp; store policies</a></p>
   </div>
 </section>

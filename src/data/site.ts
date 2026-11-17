@@ -1,3 +1,5 @@
+import { withBase } from './url';
+
 export const SITE = {
   name: 'Foothills Amish Furniture',
   origin: 'https://foothillsamishfurniture.com',
@@ -9,7 +11,7 @@ export const SITE = {
   // GTM trigger "Directions": Click URL starts with https://maps.google.com/ AND Click Text equals DIRECTIONS
   directions: 'https://maps.google.com/?daddr=106+E.+Rutherford+St,+Landrum,+SC+29356',
   mapEmbed: 'https://www.google.com/maps?q=106+E.+Rutherford+St,+Landrum,+SC+29356&output=embed',
-  book: '/pages/book',
+  book: withBase('/pages/book'),
   geo: { lat: 35.1751, lng: -82.1890 },
 };
 // 0 = Sunday. [open, close] in minutes after midnight, America/New_York.

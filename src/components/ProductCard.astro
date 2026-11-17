@@ -1,9 +1,10 @@
 ---
 import Img from './Img.astro';
 import { woodLabel, type Piece } from '../data/catalog';
+import { withBase } from '../data/url';
 const { p, eager = false, room = false } = Astro.props as { p: Piece; eager?: boolean; room?: boolean };
 ---
-<a class="pcard" href={`/products/${p.handle}`}>
+<a class="pcard" href={withBase(`/products/${p.handle}`)}>
   <div class="pcard__media"><Img name={p.image} alt={p.title} sizes="(min-width:1280px) 300px, (min-width:768px) 30vw, 46vw" widths={[400, 800]} eager={eager} /></div>
   <p class="pcard__name">{p.title}</p>
   <p class="pcard__maker">{p.vendor} · {woodLabel(p.wood)}</p>

@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { REVIEWS } from '../data/site';
+import { withBase } from '../data/url';
 const { count = 3, eyebrow = 'Customer reviews', h = 'Worth the trip to Landrum' } = Astro.props as { count?: number; eyebrow?: string; h?: string };
 const list = REVIEWS.slice(0, count);
 const id = 'rv-' + Math.random().toString(36).slice(2, 7);
@@ -9,7 +10,7 @@ const id = 'rv-' + Math.random().toString(36).slice(2, 7);
   <div class="wrap">
     <div class="section-head section-head--row" data-reveal>
       <div><span class="eyebrow">{eyebrow}</span><h2 id={id}>{h}</h2></div>
-      <a class="textlink" href="/pages/reviews-testimonials">Read more reviews <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="textlink" href={withBase('/pages/reviews-testimonials')}>Read more reviews <span class="arrow" aria-hidden="true">→</span></a>
     </div>
     <ul class="reviews" role="list">
       {list.map((r, i) => (

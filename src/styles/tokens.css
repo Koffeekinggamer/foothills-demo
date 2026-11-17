@@ -7,22 +7,10 @@
 /* ---- Self-hosted fonts: latin subset, variable, swap ---------------------
    fraunces-var-latin.woff2  ≈50 KB  (wght 400–500, opsz 28–144)
    inter-var-latin.woff2     ≈25 KB  (wght 400–600)
+   The @font-face rules live in Base.astro so url() includes
+   import.meta.env.BASE_URL (public files are not rebased).
    Preload ONLY Inter (body/LCP text); Fraunces swaps in with metric-matched
    fallback so swap causes no layout shift.                                    */
-@font-face {
-  font-family: "Fraunces";
-  src: url("/fonts/fraunces-var-latin.woff2") format("woff2");
-  font-weight: 400 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-var-latin.woff2") format("woff2");
-  font-weight: 400 600;
-  font-style: normal;
-  font-display: swap;
-}
 /* Metric-matched fallbacks (CLS ≈ 0 on font swap) */
 @font-face {
   font-family: "Fraunces Fallback";

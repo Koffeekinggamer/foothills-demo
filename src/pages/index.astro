@@ -12,6 +12,7 @@ import Promise from '../components/Promise.astro';
 import Team from '../components/Team.astro';
 import Visit from '../components/Visit.astro';
 import { SITE } from '../data/site';
+import { withBase } from '../data/url';
 import { BENCHES } from '../data/catalog';
 import { productLd } from '../data/ld';
 
@@ -37,7 +38,7 @@ const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 
     <h1 class="display">The largest Amish furniture store in the Foothills</h1>
     <p class="lede">Handcrafted Amish hardwood furniture, fabric and leather upholstery, made in the USA and delivered to your door.</p>
     <div class="btn-row hero__actions">
-      <a class="btn" href="/collections/dining-benches" data-track="shop_click" data-cta-location="hero">Shop furniture</a>
+      <a class="btn" href={withBase('/collections/dining-benches')} data-track="shop_click" data-cta-location="hero">Shop furniture</a>
       <a class="btn btn--secondary" href={SITE.book} data-track="book_appointment_click" data-cta-location="hero">Book a visit</a>
     </div>
     <p class="hero__meta"><OpenStatus /><span><a href={`tel:${SITE.tel}`} class="tnum" data-track="click_to_call" data-cta-location="hero">{SITE.telDisplay}</a></span></p>
@@ -55,7 +56,7 @@ const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 
     <div class="section-head" data-reveal><span class="eyebrow">Shop by room</span><h2 id="rooms-h">Traditional craftsmanship. Modern style.</h2><p class="lede">Customizable, handcrafted furniture at an approachable price, built to last for generations.</p></div>
     <ul class="tiles" role="list">
       {tiles.map(([t, h, im, alt], i) => (
-        <li data-reveal style={`--i:${i % 3}`}><a class="tile" href={h} data-track="view_furniture_click" data-cta-location="home_tiles">
+        <li data-reveal style={`--i:${i % 3}`}><a class="tile" href={withBase(h)} data-track="view_furniture_click" data-cta-location="home_tiles">
           <div class="tile__media"><Img name={im} alt={alt} sizes="(min-width:1280px) 410px, (min-width:768px) 31vw, 46vw" widths={[400, 800]} /></div>
           <h3 class="tile__title">{t}</h3><span class="tile__cta">View furniture <span aria-hidden="true">→</span></span></a></li>
       ))}
@@ -67,7 +68,7 @@ const itemList = { '@context': 'https://schema.org', '@type': 'ItemList', name: 
 
 <section class="section" aria-labelledby="feat-h">
   <div class="wrap">
-    <div class="section-head section-head--row" data-reveal><div><span class="eyebrow">Dining benches</span><h2 id="feat-h">Pull up a bench</h2></div><a class="textlink" href="/collections/dining-benches">All dining benches <span class="arrow" aria-hidden="true">→</span></a></div>
+    <div class="section-head section-head--row" data-reveal><div><span class="eyebrow">Dining benches</span><h2 id="feat-h">Pull up a bench</h2></div><a class="textlink" href={withBase('/collections/dining-benches')}>All dining benches <span class="arrow" aria-hidden="true">→</span></a></div>
     <ul class="pgrid pgrid--4" role="list">{feat.map((p, i) => <li data-reveal style={`--i:${i}`}><ProductCard p={p} /></li>)}</ul>
   </div>
 </section>

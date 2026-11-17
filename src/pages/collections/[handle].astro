@@ -9,6 +9,7 @@ import Promise from '../../components/Promise.astro';
 import Team from '../../components/Team.astro';
 import TrustStrip from '../../components/TrustStrip.astro';
 import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
 import { BENCHES, COLLECTION, woodLabel } from '../../data/catalog';
 import { productLd } from '../../data/ld';
 
@@ -35,7 +36,7 @@ const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', it
 ---
 <Base title={`${COLLECTION.title} | Foothills Amish Furniture`} description="Amish dining benches in solid hardwood and reclaimed barnwood: trestle, storage and backed benches built to order to match your table. Landrum, SC showroom." path={`/collections/${COLLECTION.handle}`} nav="Benches" bodyClass="page-collection" lcp={{ name: 'p-amish-reclaimed-barnwood-1869-dining-collection-0', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[ld, crumbs]}>
 <div class="wrap">
-  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/collections/amish-dining-room-furniture">Dining</a></li><li aria-current="page">Dining benches</li></ol></nav>
+  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li><a href={withBase('/collections/amish-dining-room-furniture')}>Dining</a></li><li aria-current="page">Dining benches</li></ol></nav>
   <header class="coll-hero">
     <div class="coll-hero__copy">
       <h1>{COLLECTION.title}</h1>
@@ -102,5 +103,5 @@ const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', it
   <p class="muted">A bench seats more people in less space and slides neatly under the table when it isn’t in use. Our Amish dining benches come in trestle, mission, storage and backed styles, in solid hardwoods like brown maple, cherry and quarter-sawn white oak, or in reclaimed barnwood from century-old Ohio barns. Most can be sized to your table and finished to match.</p>
 </div></section>
 
-<script is:inline src="/collection.js" defer></script>
+<script is:inline src={withBase('/collection.js')} defer></script>
 </Base>

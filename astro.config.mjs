@@ -1,7 +1,8 @@
 import { defineConfig } from 'astro/config';
 // Static demo. No integrations, no UI frameworks.
 export default defineConfig({
-  site: 'https://demo.foothillsamishfurniture.invalid',
+  site: 'https://koffeekinggamer.github.io',
+  base: '/foothills-demo',
   output: 'static',
   trailingSlash: 'never',
   build: { format: 'file', inlineStylesheets: 'always', assets: '_assets' },

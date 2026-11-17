@@ -6,6 +6,7 @@ import { getImage } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import OpenStatus from '../components/OpenStatus.astro';
 import { SITE, HOURS } from '../data/site';
+import { withBase } from '../data/url';
 import { img } from '../data/img';
 import logoInk from '../assets/img/logo-ink.png';
 import logoPaper from '../assets/img/logo-paper.png';
@@ -30,9 +31,9 @@ const logoInkW = await getImage({ src: logoInk, width: 264, format: 'webp' });
 const logoPaperW = await getImage({ src: logoPaper, width: 264, format: 'webp' });
 
 const NAV = [
-  ['Dining', '/collections/amish-dining-room-furniture'], ['Bedroom', '/collections/bedroom-sets'], ['Living', '/collections/living-room-furniture'],
-  ['Outdoor', '/collections/amish-outdoor-furniture'], ['Benches', '/collections/dining-benches'], ['Custom Cabinetry', '/pages/cabinetry-page'],
-  ['Visit', '/pages/contact-us'],
+  ['Dining', withBase('/collections/amish-dining-room-furniture')], ['Bedroom', withBase('/collections/bedroom-sets')], ['Living', withBase('/collections/living-room-furniture')],
+  ['Outdoor', withBase('/collections/amish-outdoor-furniture')], ['Benches', withBase('/collections/dining-benches')], ['Custom Cabinetry', withBase('/pages/cabinetry-page')],
+  ['Visit', withBase('/pages/contact-us')],
 ];
 const dayKeys = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const pad = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
@@ -59,14 +60,18 @@ const ld = [store, ...jsonld];
 <meta name="robots" content="noindex,nofollow" />
 <link rel="canonical" href={SITE.origin + path} />
 <meta name="theme-color" content="#FAF8F4" />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
 <Fragment set:html={`
 <!-- TAG SLOT head-1 (live position: early <head>, after verification metas) - fullthrottle.ai Launchpad lptm.js (loads GA4).
      INERT IN DEMO: commented out, placeholder ID.
 <script src="https://ftlaunchpad.ai/lptm.js?id=LPTM_ID_PLACEHOLDER" async></script>
 -->`} />
-<link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="/fonts/fraunces-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+<Fragment set:html={`<style>
+@font-face{font-family:"Fraunces";src:url("${withBase('/fonts/fraunces-var-latin.woff2')}") format("woff2");font-weight:400 500;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url("${withBase('/fonts/inter-var-latin.woff2')}") format("woff2");font-weight:400 600;font-style:normal;font-display:swap}
+</style>`} />
+<link rel="preload" href={withBase('/fonts/inter-var-latin.woff2')} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={withBase('/fonts/fraunces-var-latin.woff2')} as="font" type="font/woff2" crossorigin />
 {preload && <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset={preload} imagesizes={lcp!.sizes} />}
 {ld.map((o) => <script type="application/ld+json" set:html={JSON.stringify(o)} />)}
 <Fragment set:html={`
@@ -89,7 +94,7 @@ const ld = [store, ...jsonld];
 </aside>
 <header class="header">
   <div class="wrap header__inner">
-    <a class="brand" href="/" aria-label="Foothills Amish Furniture, home"><img src={logoInkW.src} width="132" height="41" alt="Foothills Amish Furniture" /></a>
+    <a class="brand" href={withBase('/')} aria-label="Foothills Amish Furniture, home"><img src={logoInkW.src} width="132" height="41" alt="Foothills Amish Furniture" /></a>
     <nav class="nav" aria-label="Main"><ul>{NAV.map(([n, h]) => <li><a href={h} aria-current={n === nav ? 'page' : undefined}>{n}</a></li>)}</ul></nav>
     <div class="header__actions">
       <a class="header__tel" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="header"><Icon name="phone" /><span class="header__tel-num tnum">{SITE.telDisplay}</span></a>
@@ -126,7 +131,7 @@ const ld = [store, ...jsonld];
         <p style="margin-top:var(--sp-3)"><a class="tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="footer">{SITE.telDisplay}</a></p>
         <p style="margin-top:var(--sp-2)"><a class="u-caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="footer">Directions</a></p></div>
       <div><h2>Hours</h2><p>Monday–Saturday<br />10 a.m.–5 p.m.</p><p class="muted" style="margin-top:var(--sp-2)">Sunday closed</p></div>
-      <div><h2>Explore</h2><ul><li><a href="/collections/dining-benches">Dining benches</a></li><li><a href="/pages/contact-us">Contact &amp; visit</a></li><li><a href="/pages/book">Book an appointment</a></li><li><a href="/pages/our-story">Our story</a></li><li><a href="/pages/reviews-testimonials">Reviews</a></li></ul></div>
+      <div><h2>Explore</h2><ul><li><a href={withBase('/collections/dining-benches')}>Dining benches</a></li><li><a href={withBase('/pages/contact-us')}>Contact &amp; visit</a></li><li><a href={withBase('/pages/book')}>Book an appointment</a></li><li><a href={withBase('/pages/our-story')}>Our story</a></li><li><a href={withBase('/pages/reviews-testimonials')}>Reviews</a></li></ul></div>
       <div class="footer__signup">
         <form class="signup" id="newsletter" action="#" method="post" data-form="email_signup" data-demo-form="Omnisend signup">
           <h2>Sales &amp; new arrivals</h2>
@@ -136,10 +141,10 @@ const ld = [store, ...jsonld];
         </form>
       </div>
     </div>
-    <div class="footer__base"><p>© 2026 Foothills Amish Furniture · Design demo, not the live site</p><p><a href="/pages/privacy-policy">Privacy</a> · <a href="/pages/terms-of-service">Terms</a></p></div>
+    <div class="footer__base"><p>© 2026 Foothills Amish Furniture · Design demo, not the live site</p><p><a href={withBase('/pages/privacy-policy')}>Privacy</a> · <a href={withBase('/pages/terms-of-service')}>Terms</a></p></div>
   </div>
 </footer>
-<script is:inline src="/site.js" defer></script>
+<script is:inline src={withBase('/site.js')} defer></script>
 <Fragment set:html={`
 <!-- TAG SLOTS body-end (live position: one loader at the end of <body>, run after window "load", in this order).
      ALL INERT IN DEMO: commented out, placeholder IDs. Removed for good: Constant Contact, on.aws beacon, Sentry, GemPages, Elfsight.
