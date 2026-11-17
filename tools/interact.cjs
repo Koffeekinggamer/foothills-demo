@@ -36,8 +36,10 @@ const B = process.env.ORIGIN || 'http://localhost:4321/foothills-demo';
   console.log('ld types', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent)['@type']))));
 
   await p.goto(B + '/pages/book', { waitUntil: 'load' });
-  await p.click('#cal button'); await p.waitForTimeout(500);
-  console.log('cal iframe', await p.evaluate(() => document.querySelector('#cal iframe')?.getAttribute('src')));
+  await p.click('[data-choose]'); await p.waitForTimeout(300);
+  await p.locator('[data-pick-person]:visible').first().click(); await p.waitForTimeout(300);
+  await p.locator('[id^="cal-"] button:visible').first().click(); await p.waitForTimeout(500);
+  console.log('cal iframe', await p.evaluate(() => document.querySelector('[id^="cal-"] iframe')?.getAttribute('src')));
   await p.screenshot({ path: 'screens/book-m390-calendar-loaded.png' });
   await p.goto(B + '/pages/contact-us', { waitUntil: 'load' });
   console.log('today row', await p.evaluate(() => document.querySelector('.hours-table tr.is-today th')?.textContent), await p.textContent('.announce .status__text'));

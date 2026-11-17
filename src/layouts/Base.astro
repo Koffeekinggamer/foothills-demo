@@ -10,6 +10,9 @@ import { withBase } from '../data/url';
 import { img } from '../data/img';
 import logoInk from '../assets/img/logo-ink.png';
 import logoPaper from '../assets/img/logo-paper.png';
+import { ROOMS } from '../data/catalog';
+import { heroFor } from '../data/collhero';
+import { CUSTOMIZE_MENU, ABOUT_MENU } from '../data/pagecfg';
 
 interface Props {
   title: string; description: string; path: string; nav?: string; bodyClass?: string; product?: string;
@@ -30,10 +33,27 @@ if (lcp) {
 const logoInkW = await getImage({ src: logoInk, width: 264, format: 'webp' });
 const logoPaperW = await getImage({ src: logoPaper, width: 264, format: 'webp' });
 
-const NAV = [
-  ['Dining', withBase('/collections/amish-dining-room-furniture')], ['Bedroom', withBase('/collections/bedroom-sets')], ['Living', withBase('/collections/living-room-furniture')],
-  ['Outdoor', withBase('/collections/amish-outdoor-furniture')], ['Benches', withBase('/collections/dining-benches')], ['Custom Cabinetry', withBase('/pages/cabinetry-page')],
-  ['Visit', withBase('/pages/contact-us')],
+// Main menu: the live mega-menu groups and labels, same URL paths. Every link resolves to a demo page.
+type MenuLink = [string, string];
+type Menu = { label: string; href: string; links: MenuLink[]; all?: MenuLink; img?: [string, string] };
+const EXTRA: Record<string, MenuLink[]> = { 'amish-dining-room-furniture': [['Live Edge Furniture', '/pages/live-edge-furniture'], ['Rustic Wood Furniture', '/pages/rustic-wood-furniture-landrum-sc']] };
+const MENUS: Menu[] = [
+  { label: 'Custom Cabinetry', href: '/pages/cabinetry-page', links: [] },
+  ...ROOMS.map((r) => ({ label: r.label, href: `/collections/${r.handle}`, links: [...r.subs.map((c) => [c.label, `/collections/${c.handle}`] as MenuLink), ...(EXTRA[r.handle] ?? [])],
+    all: [`Shop all ${r.label}`, `/collections/${r.handle}`] as MenuLink, img: heroFor(r.handle, null) })),
+  { label: 'Customize', href: '/pages/customize', links: CUSTOMIZE_MENU, all: ['Shop all Customize', '/pages/customize'], img: ['stain-samples', 'Wood and stain samples in the showroom'] },
+  { label: 'About', href: '/pages/our-story', links: ABOUT_MENU, all: ['Shop all About Us', '/pages/our-story'], img: ['storefront', 'The Foothills Amish Furniture storefront in Landrum'] },
+];
+// Pages map their old nav names onto the new groups.
+const NAV_ALIAS: Record<string, string> = { Benches: 'Dining', Visit: 'About' };
+const current = NAV_ALIAS[nav] ?? nav;
+const menuImgs = await Promise.all(MENUS.map(async (m) => m.img ? (await getImage({ src: img(m.img[0]), width: 480, format: 'webp' })).src : null));
+const FOOT: [string, MenuLink[]][] = [
+  ['Shop', [...ROOMS.map((r) => [r.label, `/collections/${r.handle}`] as MenuLink), ['Live edge', '/pages/live-edge-furniture'], ['Custom cabinetry', '/pages/cabinetry-page'], ['November sale', '/pages/21st-anniversary-sale']]],
+  ['Customize', [['Customization options', '/pages/customize'], ['Wood species', '/pages/wood-species-guide'], ['Wood finishes', '/pages/wood-finishes'], ['Hardware', '/pages/hardware'], ['Fabrics & leathers', '/pages/leather-fabric-upholstery-options'], ['Outdoor colors', '/pages/poly-outdoor-furniture-colors']]],
+  ['About', [['Our story', '/pages/our-story'], ['Our team', '/pages/our-team'], ['Our difference', '/pages/why-foothills-amish-furniture'], ['Our services', '/pages/our-services'], ['Craftsmanship', '/pages/craftsmanship'], ['Reviews', '/pages/reviews-testimonials'], ['Careers', '/pages/careers']]],
+  ['Help', [['Contact & visit', '/pages/contact-us'], ['Book an appointment', '/pages/book'], ['FAQ', '/pages/faq'], ['Shipping & delivery', '/pages/shipping-delivery'], ['Payments & financing', '/pages/payments-financing'], ['Furniture care', '/pages/furniture-care'], ['Store policies', '/pages/our-policies']]],
+  ['Nearby', [['Landrum showroom', '/pages/amish-furniture-showroom-landrum-sc'], ['Greenville, SC', '/pages/amish-furniture-greenville-sc'], ['Spartanburg, SC', '/pages/amish-furniture-spartanburg-sc'], ['Asheville, NC', '/pages/amish-furniture-asheville-nc'], ['Handcrafted furniture', '/pages/handcrafted-furniture-in-landrum-sc'], ['American made furniture', '/pages/american-made-solid-wood-furniture-landrum-sc'], ['Solid hardwood guide', '/pages/solid-hardwood-furniture-guide-landrum-sc']]],
 ];
 const dayKeys = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const pad = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
@@ -95,7 +115,22 @@ const ld = [store, ...jsonld];
 <header class="header">
   <div class="wrap header__inner">
     <a class="brand" href={withBase('/')} aria-label="Foothills Amish Furniture, home"><img src={logoInkW.src} width="132" height="41" alt="Foothills Amish Furniture" /></a>
-    <nav class="nav" aria-label="Main"><ul>{NAV.map(([n, h]) => <li><a href={h} aria-current={n === nav ? 'page' : undefined}>{n}</a></li>)}</ul></nav>
+    <nav class="nav" aria-label="Main"><ul>{MENUS.map((m, i) => (
+      <li class={m.links.length ? 'has-mega' : undefined}>
+        <a href={withBase(m.href)} aria-current={m.label === current ? 'page' : undefined}>{m.label}</a>
+        {m.links.length > 0 && (
+          <div class="mega" role="group" aria-label={`${m.label} menu`}>
+            <div class="wrap mega__inner">
+              <ul class="mega__links" role="list">{m.links.map(([t, h]) => <li><a href={withBase(h)}>{t}</a></li>)}</ul>
+              <div class="mega__side">
+                {menuImgs[i] && <img class="mega__img" src={menuImgs[i]!} alt="" width="240" height="300" loading="lazy" decoding="async" />}
+                {m.all && <a class="textlink mega__all" href={withBase(m.all[1])}>{m.all[0]} <span class="arrow" aria-hidden="true">→</span></a>}
+              </div>
+            </div>
+          </div>
+        )}
+      </li>
+    ))}</ul></nav>
     <div class="header__actions">
       <a class="header__tel" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="header"><Icon name="phone" /><span class="header__tel-num tnum">{SITE.telDisplay}</span></a>
       <a class="btn btn--sm header__cta" href={SITE.book} data-track="book_appointment_click" data-cta-location="header">Book a visit</a>
@@ -105,7 +140,15 @@ const ld = [store, ...jsonld];
 </header>
 <div class="sheet" id="menu" hidden>
   <div class="sheet__top"><img src={logoInkW.src} width="132" height="41" alt="" /><button class="icon-btn" type="button" aria-label="Close menu" data-menu-toggle><Icon name="close" /></button></div>
-  <nav class="sheet__nav" aria-label="Mobile">{NAV.map(([n, h]) => <a href={h}>{n}<Icon name="arrow" /></a>)}<a href={SITE.book}>Book a visit<Icon name="arrow" /></a></nav>
+  <nav class="sheet__nav" aria-label="Mobile">
+    {MENUS.map((m) => m.links.length ? (
+      <details class="sheet__group"><summary>{m.label}<Icon name="arrow" /></summary>
+        <ul role="list">{m.all && <li><a href={withBase(m.all[1])}>{m.all[0]}</a></li>}{m.links.map(([t, h]) => <li><a href={withBase(h)}>{t}</a></li>)}</ul>
+      </details>
+    ) : <a href={withBase(m.href)}>{m.label}<Icon name="arrow" /></a>)}
+    <a href={withBase('/pages/contact-us')}>Visit &amp; contact<Icon name="arrow" /></a>
+    <a href={SITE.book}>Book a visit<Icon name="arrow" /></a>
+  </nav>
 </div>
 <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
@@ -131,7 +174,6 @@ const ld = [store, ...jsonld];
         <p style="margin-top:var(--sp-3)"><a class="tnum" href={`tel:${SITE.tel}`} data-track="click_to_call" data-cta-location="footer">{SITE.telDisplay}</a></p>
         <p style="margin-top:var(--sp-2)"><a class="u-caps" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="footer">Directions</a></p></div>
       <div><h2>Hours</h2><p>Monday–Saturday<br />10 a.m.–5 p.m.</p><p class="muted" style="margin-top:var(--sp-2)">Sunday closed</p></div>
-      <div><h2>Explore</h2><ul><li><a href={withBase('/collections/dining-benches')}>Dining benches</a></li><li><a href={withBase('/pages/contact-us')}>Contact &amp; visit</a></li><li><a href={withBase('/pages/book')}>Book an appointment</a></li><li><a href={withBase('/pages/our-team')}>Our team</a></li><li><a href={withBase('/pages/our-story')}>Our story</a></li><li><a href={withBase('/pages/reviews-testimonials')}>Reviews</a></li></ul></div>
       <div class="footer__signup">
         <form class="signup" id="newsletter" action="#" method="post" data-form="email_signup" data-demo-form="Omnisend signup">
           <h2>Sales &amp; new arrivals</h2>
@@ -141,7 +183,10 @@ const ld = [store, ...jsonld];
         </form>
       </div>
     </div>
-    <div class="footer__base"><p>© 2026 Foothills Amish Furniture · Design demo, not the live site</p><p><a href={withBase('/pages/privacy-policy')}>Privacy</a> · <a href={withBase('/pages/terms-of-service')}>Terms</a></p></div>
+    <nav class="footer__links" aria-label="Footer">
+      {FOOT.map(([h, links]) => <div><h2>{h}</h2><ul>{links.map(([t, href]) => <li><a href={withBase(href)}>{t}</a></li>)}</ul></div>)}
+    </nav>
+    <div class="footer__base"><p>© 2026 Foothills Amish Furniture · Design demo, not the live site</p><p><a href={withBase('/pages/privacy-policy')}>Privacy</a> · <a href={withBase('/pages/terms-of-service')}>Terms</a> · <a href={withBase('/sitemap')}>Sitemap</a></p></div>
   </div>
 </footer>
 <script is:inline src={withBase('/site.js')} defer></script>

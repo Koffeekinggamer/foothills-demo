@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import Visit from '../../components/Visit.astro';
+import RoomTiles from '../../components/RoomTiles.astro';
+import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
+// Copy from the live /pages/21st-anniversary-sale ("November Sale"), captured read-only on 2026-11-17.
+const tiers = [['15%', 'Through $3,999'], ['20%', '$3,999–$10,000'], ['25%', '$10,000 and up']];
+const dates = [
+  { when: 'November 16–23', dt: '2026-11-16/2026-11-23', h: 'Early Black Friday', p: 'Select marked items in the showroom, 30% to 50% off.', cta: ['Book a visit', SITE.book] },
+  { when: 'November 27–30', dt: '2026-11-27/2026-11-30', h: 'Extra $100 off recliners', p: 'Extra $100 off all recliners.', cta: ['Shop recliners', withBase('/collections/living-room-chairs-recliners')] },
+];
+const ld = { '@context': 'https://schema.org', '@type': 'SaleEvent', name: 'November Sale: Buy more, save more', startDate: '2026-11-01', endDate: '2026-11-30',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@id': `${SITE.origin}/#store` }, organizer: { '@id': `${SITE.origin}/#store` },
+  description: 'On orders and inventory all month: 15% through $3,999, 20% from $3,999 to $10,000, 25% on $10,000 and up.' };
+---
+<Base title="November Sale: Buy More, Save More | Foothills Amish Furniture" description="November at Foothills Amish Furniture: 15%, 20% or 25% off orders and inventory, Early Black Friday markdowns and an extra $100 off recliners. Landrum, SC." path="/pages/21st-anniversary-sale" bodyClass="page-sale" lcp={{ name: 'fabrics-associate', sizes: '(min-width:1024px) 560px, 100vw', widths: [400, 800, 1200] }} jsonld={[ld]}>
+<section class="sale-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li aria-current="page">November sale</li></ol></nav>
+    <div class="sale-hero__inner">
+      <div>
+        <span class="eyebrow eyebrow--rule">November · Landrum, South Carolina</span>
+        <h1 class="display">Buy more, save more</h1>
+        <p class="lede" style="margin-top:var(--sp-4)">On orders and inventory all month: dining, bedroom, living, office and outdoor.</p>
+        <ul class="tiers" role="list" style="margin-top:var(--sp-6)">
+          {tiers.map(([pct, rng]) => <li><p class="pct tnum">{pct}</p><p class="rng tnum">{rng}</p></li>)}
+        </ul>
+        <div class="btn-row" style="margin-top:var(--sp-6)">
+          <a class="btn" href={SITE.book} data-track="book_appointment_click" data-cta-location="sale_hero">Book a visit</a>
+          <a class="btn btn--secondary" href="#rooms">Shop the sale</a>
+        </div>
+      </div>
+      <div class="split__media sale-hero__media"><Img name="fabrics-associate" alt="A Foothills specialist showing fabric samples to a couple" sizes="(min-width:1024px) 560px, 100vw" widths={[400, 800, 1200]} eager /></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="dates-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><span class="eyebrow">November</span><h2 id="dates-h">Dates to know</h2></div>
+    <ol class="dates" role="list">
+      {dates.map((d) => <li data-reveal><time datetime={d.dt}>{d.when}</time><div><h3>{d.h}</h3><p>{d.p}</p></div><a class="textlink" href={d.cta[1]}>{d.cta[0]} <span class="arrow" aria-hidden="true">→</span></a></li>)}
+    </ol>
+    <p class="fineprint">Ask a furniture specialist for details.</p>
+  </div>
+</section>
+
+<div id="rooms"><RoomTiles h="Everything is on sale" /></div>
+
+<section class="section"><div class="wrap"><Visit eyebrow="Landrum showroom" h="See it in person" loc="sale_visit" /></div></section>
+</Base>

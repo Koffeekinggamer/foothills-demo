@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../data/url';
+import { STATIC_PAGES, PAGE_ROUTES, ROOMS } from '../data/routes';
+const groups = ['About', 'Customize', 'Help', 'Nearby'].map((g) => [g, PAGE_ROUTES.filter((r) => r[2] === g)] as const);
+---
+<Base title="Sitemap | Foothills Amish Furniture" description="Every page on the Foothills Amish Furniture site." path="/sitemap" bodyClass="page-sitemap">
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li aria-current="page">Sitemap</li></ol></nav>
+  <header class="page-hero page-hero--text"><span class="eyebrow eyebrow--rule">Sitemap</span><h1>Every page, in one place</h1></header>
+  <div class="sitemap section" style="padding-top:0">
+    <section><h2>Main</h2><ul>{STATIC_PAGES.map(([t, p]) => <li><a href={withBase(p)}>{t}</a></li>)}</ul></section>
+    {ROOMS.map((r) => <section><h2><a href={withBase(`/collections/${r.handle}`)}>{r.label}</a></h2><ul>{r.subs.map((s) => <li><a href={withBase(`/collections/${s.handle}`)}>{s.label}</a></li>)}</ul></section>)}
+    {groups.map(([g, list]) => <section><h2>{g}</h2><ul>{list.map(([t, p]) => <li><a href={withBase(p)}>{t}</a></li>)}</ul></section>)}
+  </div>
+</div>
+</Base>

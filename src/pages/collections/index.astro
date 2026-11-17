@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import Img from '../../components/Img.astro';
+import { SITE } from '../../data/site';
+import { withBase } from '../../data/url';
+import { ROOMS, COLLECTIONS } from '../../data/catalog';
+import { heroFor } from '../../data/collhero';
+const ld = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Shop Amish furniture', url: `${SITE.origin}/collections`,
+  hasPart: ROOMS.map((r) => ({ '@type': 'CollectionPage', name: COLLECTIONS[r.handle].title, url: `${SITE.origin}/collections/${r.handle}` })) };
+---
+<Base title="Shop Amish Furniture by Room | Foothills Amish Furniture" description="Browse handcrafted Amish furniture by room: dining, bedroom, living, office and outdoor. Built to order in solid American hardwoods. Landrum, SC showroom." path="/collections" nav="" bodyClass="page-collections" jsonld={[ld]}>
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li aria-current="page">Shop furniture</li></ol></nav>
+  <header class="page-hero page-hero--text"><span class="eyebrow eyebrow--rule">Shop furniture</span><h1>Shop Amish furniture by room</h1>
+    <p class="lede">Every piece is handcrafted from solid American hardwood and most are built to order in your choice of wood, finish and size.</p></header>
+</div>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <ul class="rooms-index" role="list">
+      {ROOMS.map((r, i) => {
+        const [img, alt] = heroFor(r.handle, null);
+        return (
+          <li class="rooms-index__item" data-reveal style={`--i:${i % 3}`}>
+            <a class="rooms-index__media" href={withBase(`/collections/${r.handle}`)} tabindex="-1" aria-hidden="true"><Img name={img} alt="" sizes="(min-width:1024px) 400px, 100vw" widths={[400, 800]} eager={i < 1} /></a>
+            <h2 class="h3"><a href={withBase(`/collections/${r.handle}`)}>{r.label}</a></h2>
+            <ul role="list" class="rooms-index__subs">{r.subs.map((s) => <li><a href={withBase(`/collections/${s.handle}`)}>{s.label}</a></li>)}</ul>
+            <a class="textlink" href={withBase(`/collections/${r.handle}`)}>Shop all {r.label.toLowerCase()} <span class="arrow" aria-hidden="true">→</span></a>
+          </li>
+        );
+      })}
+      <li class="rooms-index__item" data-reveal style="--i:2">
+        <a class="rooms-index__media" href={withBase('/pages/live-edge-furniture')} tabindex="-1" aria-hidden="true"><Img name="tile-live-edge" alt="" sizes="(min-width:1024px) 400px, 100vw" widths={[400, 800]} /></a>
+        <h2 class="h3"><a href={withBase('/pages/live-edge-furniture')}>Live edge</a></h2>
+        <ul role="list" class="rooms-index__subs"><li><a href={withBase('/pages/live-edge-furniture')}>Live edge furniture</a></li><li><a href={withBase('/pages/rustic-wood-furniture-landrum-sc')}>Rustic wood furniture</a></li><li><a href={withBase('/pages/cabinetry-page')}>Custom cabinetry</a></li></ul>
+        <a class="textlink" href={withBase('/pages/live-edge-furniture')}>See live edge <span class="arrow" aria-hidden="true">→</span></a>
+      </li>
+    </ul>
+  </div>
+</section>
+</Base>
