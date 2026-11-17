@@ -47,13 +47,13 @@ const bullets = (p.bullets || []).filter((t) => t !== p.dims && !JUNK.test(t)).s
 const specParas = p.paras.filter((t) => isSpec(t) && t !== p.dims && !/^SKU/i.test(t)).slice(0, 2);
 const shortTitle = p.title.replace(/^Amish\s+/i, '');
 ---
-<Base title={`${p.title} | Foothills Amish Furniture`} description={`${p.title} by ${p.vendor}. Amish-made, built to order in your choice of wood and finish. See it at our Landrum, SC showroom.`} path={`/products/${p.handle}`} nav={isBench ? 'Benches' : room.label} bodyClass="page-product" product={p.handle} lcp={{ name: p.image, sizes: '(min-width:1024px) 54vw, 100vw' }} jsonld={[ld, crumbs]}>
+<Base title={`${p.title} | Foothills Amish Furniture`} description={`${p.title} by ${p.vendor}. Amish-made, built to order in your choice of wood and finish. See it at our Landrum, SC showroom.`} path={`/products/${p.handle}`} nav={isBench ? 'Benches' : room.label} bodyClass="page-product" product={p.handle} lcp={{ name: p.image, sizes: '(min-width:1024px) 54vw, (min-width:768px) 50vw, 100vw' }} jsonld={[ld, crumbs]}>
 <div class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href={withBase('/')}>Home</a></li><li><a href={withBase(`/collections/${room.handle}`)}>{room.label}</a></li><li><a href={withBase(`/collections/${home.handle}`)}>{isBench ? 'Dining benches' : home.label}</a></li><li aria-current="page">{p.title}</li></ol></nav>
   <div class="pdp">
     <div class="gallery">
-      <div class="gallery__main"><Img name={gallery[0].name} alt={gallery[0].alt} sizes="(min-width:1024px) 54vw, 100vw" eager /></div>
-      {gallery.map((g, i) => <template id={`gallery-${i}`}><Img name={g.name} alt={g.alt} sizes="(min-width:1024px) 54vw, 100vw" /></template>)}
+      <div class="gallery__main"><Img name={gallery[0].name} alt={gallery[0].alt} sizes="(min-width:1024px) 54vw, (min-width:768px) 50vw, 100vw" eager /></div>
+      {gallery.map((g, i) => <template id={`gallery-${i}`}><Img name={g.name} alt={g.alt} sizes="(min-width:1024px) 54vw, (min-width:768px) 50vw, 100vw" /></template>)}
       <ul class="gallery__thumbs" role="list">
         {gallery.map((g, i) => <li><button type="button" aria-label={`Show image ${i + 1}: ${g.room ? 'room photo' : 'product photo'}`} aria-current={i === 0 ? 'true' : undefined} data-room={g.room ? '' : undefined} class={g.room ? 'is-room' : undefined}><Img name={g.name} alt="" sizes="120px" widths={[400]} /></button></li>)}
       </ul>
