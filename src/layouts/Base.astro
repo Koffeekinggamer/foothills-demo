@@ -107,9 +107,10 @@ const ld = [store, ...jsonld];
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 -->`} />
 <a class="skip" href="#main">Skip to content</a>
-<aside class="announce" aria-label="Showroom status">
+<aside class="announce" aria-label="Showroom">
   <div class="wrap announce__inner announce__inner--status">
     <OpenStatus />
+    <a class="announce__link" href={withBase('/pages/21st-anniversary-sale')} aria-current={path === '/pages/21st-anniversary-sale' ? 'page' : undefined}><strong>November sale</strong></a>
     <a class="announce__addr" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="announce"><span class="announce__addr-long">{SITE.street}, Landrum, SC</span><span class="announce__addr-short">Landrum, SC</span></a>
   </div>
 </aside>
