@@ -7,8 +7,13 @@
 .status.is-closed .status__dot { background: var(--c-muted); }
 .status.is-open .status__text { color: var(--c-ink); }
 
-/* Announcement bar = status + address */
+/* Announcement bar = status + November sale + address */
 .announce__inner--status { justify-content: space-between; gap: var(--sp-4); font-size: var(--fs-xs); }
+.announce__inner--status .announce__link { align-items: center; min-height: 2.75rem; min-width: 2.75rem; padding-inline: var(--sp-2); }
+@media (max-width: 767px) {
+  .announce__inner--status { flex-wrap: wrap; justify-content: center; }
+  .announce__inner--status .announce__link { flex-basis: 100%; justify-content: center; }
+}
 .announce__inner--status .status__text { font-weight: var(--fw-semibold); }
 .announce__addr { color: var(--c-muted) !important; text-decoration: underline; text-decoration-color: var(--c-line-strong); text-underline-offset: .25em; white-space: nowrap; }
 .announce__addr-long { display: none; }
