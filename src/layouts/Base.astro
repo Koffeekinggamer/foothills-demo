@@ -8,6 +8,7 @@ import Icon from '../components/Icon.astro';
 import OpenStatus from '../components/OpenStatus.astro';
 import { SITE, HOURS } from '../data/site';
 import { withBase } from '../data/url';
+import { ANNOUNCE } from '../data/announce';
 import { img } from '../data/img';
 import logoInk from '../assets/img/logo-ink.png';
 import logoPaper from '../assets/img/logo-paper.png';
@@ -110,7 +111,7 @@ const ld = [store, ...jsonld];
 <aside class="announce" aria-label="Showroom">
   <div class="wrap announce__inner announce__inner--status">
     <OpenStatus />
-    <a class="announce__link" href={withBase('/pages/21st-anniversary-sale')} aria-current={path === '/pages/21st-anniversary-sale' ? 'page' : undefined}><strong>November sale</strong></a>
+    {ANNOUNCE.show && <a class="announce__link" href={withBase(ANNOUNCE.href)} aria-current={path === ANNOUNCE.href ? 'page' : undefined}><strong>{ANNOUNCE.label}</strong></a>}
     <a class="announce__addr" href={SITE.directions} target="_blank" rel="noopener" data-track="directions_click" data-cta-location="announce"><span class="announce__addr-long">{SITE.street}, Landrum, SC</span><span class="announce__addr-short">Landrum, SC</span></a>
   </div>
 </aside>
