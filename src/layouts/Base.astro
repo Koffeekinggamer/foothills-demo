@@ -117,7 +117,7 @@ const ld = [store, ...jsonld];
 </aside>
 <header class="header">
   <div class="wrap header__inner">
-    <a class="brand" href={withBase('/')} aria-label="Foothills Amish Furniture, home"><img src={logoInkW.src} width="132" height="41" alt="Foothills Amish Furniture" /></a>
+    <a class="brand" href={withBase('/')} aria-label="Foothills Amish Furniture, home"><img src={logoInkW.src} width="132" height="41" alt="Foothills Amish Furniture" decoding="async" /></a>
     <nav class="nav" aria-label="Main"><ul>{MENUS.map((m, i) => (
       <li class={m.links.length ? 'has-mega' : undefined}>
         <a href={withBase(m.href)} aria-current={m.label === current ? 'page' : undefined}>{m.label}</a>
@@ -142,7 +142,7 @@ const ld = [store, ...jsonld];
   </div>
 </header>
 <div class="sheet" id="menu" hidden>
-  <div class="sheet__top"><img src={logoInkW.src} width="132" height="41" alt="" /><button class="icon-btn" type="button" aria-label="Close menu" data-menu-toggle><Icon name="close" /></button></div>
+  <div class="sheet__top"><img src={logoInkW.src} width="132" height="41" alt="" decoding="async" /><button class="icon-btn" type="button" aria-label="Close menu" data-menu-toggle><Icon name="close" /></button></div>
   <nav class="sheet__nav" aria-label="Mobile">
     {MENUS.map((m) => m.links.length ? (
       <details class="sheet__group"><summary>{m.label}<Icon name="arrow" /></summary>
@@ -170,7 +170,7 @@ const ld = [store, ...jsonld];
   <div class="wrap">
     <div class="footer__top">
       <div class="footer__brand">
-        <img src={logoPaperW.src} width="132" height="41" alt="Foothills Amish Furniture" loading="lazy" />
+        <img src={logoPaperW.src} width="132" height="41" alt="Foothills Amish Furniture" loading="lazy" decoding="async" />
         <p>Handcrafted Amish hardwood furniture in Landrum, South Carolina. Family-owned. Delivered nationwide.</p>
       </div>
       <div><h2>Visit</h2><address>{SITE.street}<br />{SITE.city}, {SITE.region} {SITE.zip}</address>

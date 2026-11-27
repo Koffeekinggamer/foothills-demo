@@ -9,8 +9,9 @@
    inter-var-latin.woff2     ≈25 KB  (wght 400–600)
    The @font-face rules live in Base.astro so url() includes
    import.meta.env.BASE_URL (public files are not rebased).
-   Preload ONLY Inter (body/LCP text); Fraunces swaps in with metric-matched
-   fallback so swap causes no layout shift.                                    */
+   Both files are preloaded. Tested without the Fraunces preload: no LCP gain
+   and CLS rose to 0.031 on collection pages, so keep both.
+   Licenses (SIL OFL 1.1): public/fonts/OFL-Fraunces.txt, OFL-Inter.txt.        */
 /* Metric-matched fallbacks (CLS ≈ 0 on font swap) */
 @font-face {
   font-family: "Fraunces Fallback";
